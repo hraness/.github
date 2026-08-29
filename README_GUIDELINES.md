@@ -147,8 +147,7 @@ Choose one explicit relationship for every product site:
 
 Use this for a quiet technical project page. Render repository-owned Markdown
 at build time. Preserve headings, code, tables, relative links, and images;
-reject unsafe HTML and URL schemes. Test mobile width, enlarged text, keyboard
-focus, light and dark appearance, and source equality.
+reject unsafe HTML and URL schemes, and test source equality.
 
 ### Render a marked README selection
 
@@ -167,7 +166,8 @@ manual in the README or docs instead of copying it into landing-page prose.
 
 Whichever relationship applies, update the README, site source, metadata, and
 their alignment tests in the same behavior change. Treat stale documentation
-and unsupported site claims as defects.
+and unsupported site claims as defects. Test mobile width, enlarged text,
+keyboard focus, and light and dark appearance.
 
 ## Keep the page quiet
 
