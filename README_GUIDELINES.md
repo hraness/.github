@@ -166,8 +166,10 @@ manual in the README or docs instead of copying it into landing-page prose.
 
 Whichever relationship applies, update the README, site source, metadata, and
 their alignment tests in the same behavior change. Treat stale documentation
-and unsupported site claims as defects. Test mobile width, enlarged text,
-keyboard focus, and light and dark appearance.
+and unsupported site claims as defects. Review the changed surface at mobile
+width and 200% text, traverse its interactive controls by keyboard, and inspect
+every color mode it supports. Automate those checks when an existing browser
+harness or the regression risk makes the evidence worth maintaining.
 
 ## Keep the page quiet
 
