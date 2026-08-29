@@ -35,7 +35,7 @@ verification.
 ## Open with the durable product
 
 The first paragraph should survive a change in interface or implementation.
-Write three or four connected sentences that establish:
+Use one compact paragraph, with as many sentences as needed, to establish:
 
 - the product category and intended reader;
 - the concrete problem boundary;
