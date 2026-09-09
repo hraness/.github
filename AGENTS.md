@@ -1,13 +1,17 @@
 # Contents
 
 - `profile/README.md` is the public Hraness organization profile.
+- `DOCUMENTATION_GUIDELINES.md` is the shared reader-need, evidence, and review contract for every Hraness documentation surface.
 - `README_GUIDELINES.md` is the shared information architecture and review contract for Hraness repository READMEs and their website projections.
 - `STYLE.md` defines the public and reader-facing prose contract.
+- `CONTRIBUTING.md` provides default contributor guidance for repositories without their own.
 - `.agents/skills/` contains portable repository orchestration skills.
 
 # Guidelines
 
 - Keep this repository public, self-contained, and free of private repository names, paths, credentials, provider operations, or publication mechanics.
+- For every documentation surface, follow `DOCUMENTATION_GUIDELINES.md`: distinguish guided learning, task completion, factual reference, and explanation; keep each page or section focused on its reader's need, and link between forms. Verify prerequisites, capabilities, effects, and a complete path to the stated result.
+- Treat `DOCUMENTATION_GUIDELINES.md` as the canonical cross-repository documentation framework. Adopt it explicitly in each affected repository's root guide and contribution path; this repository's `AGENTS.md` is not inherited across repositories.
 - Treat `README_GUIDELINES.md` as the canonical cross-repository README framework. Change it when recurring evidence warrants a shared rule, then adopt the change deliberately in affected repositories.
 - Follow `STYLE.md` for the organization profile and other public repository prose.
 - Keep the organization profile short. Link to shared guidance instead of copying it into `profile/README.md`.

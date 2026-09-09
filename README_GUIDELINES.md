@@ -7,6 +7,9 @@ project's history.
 
 These guidelines define an information architecture, not a fixed template.
 Use the smallest shape that answers the real questions for the project.
+Apply the shared [documentation guidelines](DOCUMENTATION_GUIDELINES.md) to
+the whole documentation system. This guide specializes its README front door;
+the linked framework distinguishes learning, tasks, reference, and explanation.
 
 ## Build a trust path
 
@@ -106,24 +109,22 @@ The README must describe shipped behavior. Keep internal phases, ticket names,
 private paths, migration chronology, and assumed repository history out of the
 public narrative.
 
-## Move depth into task-oriented docs
+## Route to the right kind of depth
 
 The README is a front door and working contract. It is not the only manual.
 Move detail when it interrupts the trust path or serves a narrower reader.
 
-Organize deeper documentation around tasks such as:
-
-- getting started;
-- using the CLI, SDK, or application;
-- operating providers or deployments;
-- integrating and extending;
-- understanding architecture and data contracts;
-- security, privacy, and recovery; and
-- contributing and release verification.
+Route readers to guided tutorials for learning, how-to guides for concrete
+tasks, reference for exact interfaces, and explanation for understanding.
+For example, a first project, a recovery procedure, an API contract, and an
+architecture discussion serve different needs even when they concern the
+same feature. Give each destination a clear purpose and recognizable label.
 
 Link at the point where the README stops. A final documentation map may group
 these destinations by reader intent. Do not expose the repository directory
 tree as if it were an information architecture.
+Small projects may keep distinct sections in one file. Do not create four
+directories or four manuals merely to match the framework.
 
 ## Adapt the shape to the project
 

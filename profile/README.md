@@ -59,5 +59,7 @@ from another's.
 
 Open the product that matches the job, reproduce its first proof, and use its
 repository for issues or contributions. Maintainers can use the shared
+[documentation guidelines](https://github.com/hraness/.github/blob/main/DOCUMENTATION_GUIDELINES.md)
+for learning, tasks, reference, and explanation, and the
 [README guidelines](https://github.com/hraness/.github/blob/main/README_GUIDELINES.md)
 to keep repository and website stories aligned.

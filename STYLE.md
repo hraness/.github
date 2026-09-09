@@ -4,6 +4,11 @@ This guide covers public editorial, product copy, documentation, README content,
 
 Public prose must be precise, useful, self-contained, and free of internal project reasoning.
 
+Use the [documentation guidelines](DOCUMENTATION_GUIDELINES.md) to choose a
+document's reader need and structure. This guide owns prose, not a mandatory
+page layout. Tutorials and procedures can state their goal and move into
+action; reference can organize exact facts around the interface being used.
+
 ## Leave the reader with a clearer model
 
 - Write for a reader who knows the general subject but has not read the sources, related articles, or internal project material.
