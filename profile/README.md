@@ -10,7 +10,7 @@ evidence within reach, and states the boundary around what it owns.
 
 | If you need to… | Start here | What you can inspect first |
 | --- | --- | --- |
-| Coordinate local coding-agent work and repository gates | [HRA](https://hra.sh) | The task, exact tree, check, and delivery receipt |
+| Coordinate local coding-agent work and repository gates | [Oompa](https://oompa.dev) | The task, exact tree, check, and delivery receipt |
 | Capture web sources or run a typed provider operation | [Ghostget](https://ghostget.com) | The normalized record, archived media, or bounded operation result |
 | Generate or edit media from a CLI, SDK, MCP server, or Agent Skill | [Slopcamera](https://slopcamera.com) | The produced artifact and the interface that made it |
 | Turn a Markdown vault into searchable, linked knowledge | [KB](https://hraness.com/kb) | A finished query with the notes and relationships behind it |
