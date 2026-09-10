@@ -11,7 +11,7 @@ evidence within reach, and states the boundary around what it owns.
 | If you need to… | Start here | What you can inspect first |
 | --- | --- | --- |
 | Coordinate local coding-agent work and repository gates | [HRA](https://hra.sh) | The task, exact tree, check, and delivery receipt |
-| Capture web sources or run a typed provider operation | [Wrench](https://wrench.rip) | The normalized record, archived media, or bounded operation result |
+| Capture web sources or run a typed provider operation | [Ghostget](https://ghostget.com) | The normalized record, archived media, or bounded operation result |
 | Generate or edit media from a CLI, SDK, MCP server, or Agent Skill | [Slopcamera](https://slop.camera) | The produced artifact and the interface that made it |
 | Turn a Markdown vault into searchable, linked knowledge | [KB](https://hraness.com/kb) | A finished query with the notes and relationships behind it |
 | Drive a frontend through repeatable browser scenarios | [Direct](https://hraness.com/direct) | The scenario, browser observation, and verification result |
