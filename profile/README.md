@@ -1,65 +1,31 @@
-# Hraness
+📈 [aicharts.io](https://aicharts.io)
 
-Technical products for work that has to remain inspectable.
+🤖 [textbutler.app](https://textbutler.app)
 
-Hraness builds deliberately scoped tools across the terminal, browser, and
-agent workflows. Each product puts a usable result first, keeps the nearest
-evidence within reach, and states the boundary around what it owns.
+👻 [ghostget.com](https://ghostget.com)
 
-## Start with the job
+📇 [peopleblade.com](https://peopleblade.com)
 
-| If you need to… | Start here | What you can inspect first |
-| --- | --- | --- |
-| Coordinate local coding-agent work and repository gates | [Oompa](https://oompa.app) | The task, exact tree, check, and delivery receipt |
-| Capture web sources or run a typed provider operation | [Ghostget](https://ghostget.com) | The normalized record, archived media, or bounded operation result |
-| Generate or edit media from a CLI, SDK, MCP server, or Agent Skill | [Slopcamera](https://slopcamera.com) | The produced artifact and the interface that made it |
-| Turn a Markdown vault into searchable, linked knowledge | [KB](https://hraness.com/kb) | A finished query with the notes and relationships behind it |
-| Drive a frontend through repeatable browser scenarios | [Direct](https://hraness.com/direct) | The scenario, browser observation, and verification result |
-| Compose a MIDI loop with a person or agent | [Soundfish](https://sound.fish) | A self-contained, content-addressed composition URL |
+📝 [wordcell.io](https://wordcell.io)
 
-The portfolio also includes focused web products for
-[life perspective](https://lifedaysleft.com),
-[research editions](https://sponge.computer),
-[sound and sleep](https://sleepy.land),
-[public dataset exports](https://bigdatadepot.com), and
-[model comparison](https://aicharts.io).
+📸 [slopcamera.com](https://slopcamera.com)
 
-## One shared product language
+🟠 [oompa.app](https://oompa.app)
 
-The interfaces differ, but the reader path stays familiar:
+📊 [lifecharts.io](https://lifecharts.io)
 
-1. **Result** — show a real output, artifact, or state before explaining the
-   architecture.
-2. **Working model** — name the few steps and invariants that produce it.
-3. **Interfaces** — make the CLI, package, website, API, and agent entry points
-   agree about the same product.
-4. **Evidence** — keep sources, receipts, tests, or deterministic observations
-   close to the claim they support.
-5. **Boundary** — say what stays local, what is hosted, what can have external
-   effects, and what the product does not promise.
+🧽 [sponge.computer](https://sponge.computer)
 
-That sequence is a design system for trust, not a claim that every product has
-the same visual identity.
+🦓 [stripe history](https://hraness.com/stripe)
 
-## Choose the surface that owns the work
+🐟 [sound.fish](https://sound.fish)
 
-- Product sites are the shortest path to a result.
-- Public repositories own source, releases, contribution paths, and technical
-  contracts for open products.
-- Agent-facing documents and machine-readable routes mirror the same stable
-  facts when a product supports them.
-- [Hraness.com](https://hraness.com) is the portfolio index and links each
-  product to its canonical surface.
+⚔️ [vhalla.com](https://vhalla.com)
 
-Individual product pages state their own account, privacy, cost, storage,
-network, and availability boundaries. Do not infer one product's guarantees
-from another's.
+🦠 [platonik.space](https://platonik.space)
 
-## Build with us
+🦾 [soulscrape.com](https://soulscrape.com)
 
-Open the product that matches the job, reproduce its first proof, and use its
-repository for issues or contributions. Maintainers can use the shared
-[documentation guidelines](https://github.com/hraness/.github/blob/main/DOCUMENTATION_GUIDELINES.md)
-for learning, tasks, reference, and explanation, and the
-[README guidelines](https://github.com/hraness/.github/blob/main/README_GUIDELINES.md)
-to keep repository and website stories aligned.
+🏭 [swft.io](https://swft.io)
+
+
