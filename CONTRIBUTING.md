@@ -15,3 +15,8 @@ Use the [README guidelines](https://github.com/hraness/.github/blob/main/README_
 for repository front doors and [writing style](https://github.com/hraness/.github/blob/main/STYLE.md)
 for public prose. Keep source records intact and exclude credentials, private
 data, and unsupported claims from public examples.
+
+For optional product updates and development support, follow the
+[shared invitation framework](SUPPORT_INVITATIONS.md). Choose the appropriate
+website, CLI, agent or desktop surface, use the registered product identity,
+and keep signup and payment under the person's control.

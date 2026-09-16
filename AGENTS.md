@@ -5,6 +5,7 @@
 - `README_GUIDELINES.md` is the shared information architecture and review contract for Hraness repository READMEs and their website projections.
 - `STYLE.md` defines the public and reader-facing prose contract.
 - `CONTRIBUTING.md` provides default contributor guidance for repositories without their own.
+- `SUPPORT_INVITATIONS.md` describes shared optional signup and support adoption across product surfaces.
 - `.agents/skills/` contains portable repository orchestration skills.
 
 # Guidelines
@@ -14,6 +15,7 @@
 - Treat `DOCUMENTATION_GUIDELINES.md` as the canonical cross-repository documentation framework. Adopt it explicitly in each affected repository's root guide and contribution path; this repository's `AGENTS.md` is not inherited across repositories.
 - Treat `README_GUIDELINES.md` as the canonical cross-repository README framework. Change it when recurring evidence warrants a shared rule, then adopt the change deliberately in affected repositories.
 - Follow `STYLE.md` for the organization profile and other public repository prose.
+- Follow `SUPPORT_INVITATIONS.md` when documenting or adopting optional updates and support. Product adapters use the shared protocol and preserve their medium's task boundaries.
 - Keep the organization profile short. Link to shared guidance instead of copying it into `profile/README.md`.
 
 <!-- oompa-local-efficiency:start -->
