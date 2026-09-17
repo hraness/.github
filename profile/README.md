@@ -28,4 +28,18 @@
 
 🏭 [swft.io](https://swft.io)
 
+😴 [sleepy.land](https://sleepy.land)
+
+🧬 [hraness.com/eds](https://hraness.com/eds)
+
+🎯 [hraness.com/direct](https://hraness.com/direct)
+
+🚦 [agentmixer.dev](https://agentmixer.dev)
+
+🔬 [oh.computer](https://oh.computer)
+
+🪨 [gobstopper](https://gobstopper.vercel.app)
+
+🧫 [morphogen](https://morphogen-teal.vercel.app)
+
 
