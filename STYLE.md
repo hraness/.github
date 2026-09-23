@@ -144,7 +144,7 @@ Readers trust a page that states its limits plainly. They skim a page that repea
 - Use sentence case for headings, buttons, tabs, labels, placeholders, and empty states.
 - Capitalize proper nouns according to their official form.
 - Put periods on full sentences, including callouts.
-- Omit periods from headings, buttons, and short labels.
+- Omit periods from headings, buttons, and short labels. A full-sentence display heading in the editorial marketing preset may end with a period.
 - Use the Oxford comma.
 - Use natural contractions when they match the voice. Do not force them.
 - Use curly quotation marks in prose and straight quotation marks in code.
@@ -232,5 +232,7 @@ A prompt, skill, or template that makes a model write published text is public c
 
 ## Say who wrote and who checked
 
-- Record who drafted and who reviewed generated or agent-drafted text: the author, an independent human, or an AI agent, by name.
-- Never credit AI-drafted text to a person as its sole author, never describe AI review as human review, and never claim a review that has no record.
+- Show AI-drafting disclosure on hraness.com only, through its shared disclosure component, on every page with AI-drafted text. Other Hraness sites and products do not carry AI-drafting disclosures, labels, or badges.
+- Everywhere, keep a record of who drafted and who reviewed generated or agent-drafted text: the author, an independent human, or an AI agent, by name.
+- Never credit AI-drafted text to a person as its sole author, never describe AI review as human review, and never claim a review that has no record. A page without a review record makes no review claim.
+- Text an agent posts from a person's account does not claim that person wrote AI-drafted work.
