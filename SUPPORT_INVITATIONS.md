@@ -15,8 +15,9 @@ the product's dependency policy; keep cadence out of individual adapters.
 
 ## Choose the product and surface
 
-Use an exact product identity accepted by Accounts and one honest, specific
-value proposition. Offer product updates only when that product has a
+Use an exact product identity accepted by Accounts and one specific value
+proposition: 12 words or fewer, in the product registry's words, saying what
+the product does for the person. Offer product updates only when that product has a
 registered public mailing list. A general Hraness newsletter uses the Hraness
 identity and describes general writing and project updates. A product without
 a list can still offer optional development support. Do not invent a list or
@@ -61,8 +62,14 @@ Node or Rust runtime only at the application-owned command boundary.
 
 Read `<tool> support protocol --json` for the installed version's exact argv
 and lifecycle. At an eligible closeout, call its offer command once. A quiet
-result requires no mention. Present an offer briefly with its value proposition
-and clean links, respecting the person's instructions.
+result requires no mention. Present the offer as one sentence,
+“Optional: {value proposition}”, followed by the returned links. Do not add
+adjectives, urgency, emoji, exclamation marks, or a follow-up question, and
+respect the person's instructions.
+
+Keep this protocol in the Agent Skill and the foundation's agent docs. A README
+or `llms.txt` tells people, in two sentences, that optional updates and support
+exist, and links to the product's support page.
 
 Call `shown` with the returned invitation ID only after persistent human-facing
 output. Collapsed progress commentary does not qualify. A host whose only

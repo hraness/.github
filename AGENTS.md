@@ -3,7 +3,8 @@
 - `profile/README.md` is the public Hraness organization profile.
 - `DOCUMENTATION_GUIDELINES.md` is the shared reader-need, evidence, and review contract for every Hraness documentation surface.
 - `README_GUIDELINES.md` is the shared information architecture and review contract for Hraness repository READMEs and their website projections.
-- `STYLE.md` defines the public and reader-facing prose contract.
+- `STYLE.md` defines the public and reader-facing prose contract; `WRITING.md` defines internal prose. Repositories keep synced copies of both.
+- `GENERATION_STYLE.md` holds the versioned instruction block for models that write published text.
 - `CONTRIBUTING.md` provides default contributor guidance for repositories without their own.
 - `SUPPORT_INVITATIONS.md` describes shared optional signup and support adoption across product surfaces.
 - `.agents/skills/` contains portable repository orchestration skills.
@@ -14,9 +15,17 @@
 - For every documentation surface, follow `DOCUMENTATION_GUIDELINES.md`: distinguish guided learning, task completion, factual reference, and explanation; keep each page or section focused on its reader's need, and link between forms. Verify prerequisites, capabilities, effects, and a complete path to the stated result.
 - Treat `DOCUMENTATION_GUIDELINES.md` as the canonical cross-repository documentation framework. Adopt it explicitly in each affected repository's root guide and contribution path; this repository's `AGENTS.md` is not inherited across repositories.
 - Treat `README_GUIDELINES.md` as the canonical cross-repository README framework. Change it when recurring evidence warrants a shared rule, then adopt the change deliberately in affected repositories.
-- Follow `STYLE.md` for the organization profile and other public repository prose.
+- Follow `STYLE.md` for the organization profile and other public repository prose. `STYLE.md` and `WRITING.md` here are the canonical copies: change shared rules here first, then sync them into repositories with each repository's rules kept under “Repository additions”.
+- Distribute the `hraness-public-copy` block below into repository `AGENTS.md` files the same way as the `oompa-local-efficiency` block.
 - Follow `SUPPORT_INVITATIONS.md` when documenting or adopting optional updates and support. Product adapters use the shared protocol and preserve their medium's task boundaries.
 - Keep the organization profile short. Link to shared guidance instead of copying it into `profile/README.md`.
+
+<!-- hraness-public-copy:start -->
+- Public copy (websites, READMEs, docs, package and GitHub descriptions, CLI help, `llms.txt`, generated pages) follows `STYLE.md`, synced from hraness/.github. Text a model writes for publication also follows `GENERATION_STYLE.md`.
+- The delivery vocabulary in this file (admission, qualification, custody, receipt, bounded, lane, gate, surface, projection) is internal. Translate it into what the reader gets.
+- Take one-line product and sibling descriptions from the portfolio registry and versions from the release record. Tests pin facts, not prose.
+- Run `bun run check:copy` before handoff when the repository has it.
+<!-- hraness-public-copy:end -->
 
 <!-- oompa-local-efficiency:start -->
 - Treat the user's request to change this repository as standing authorization for routine task-owned commits, pushes, pull requests, merges, releases, deployments, and production verification after the gates applicable to that action pass. Do not ask for duplicate confirmation. Build confidence through relevant automated checks, bounded diagnostics, and independent review, not another human approval. Passing checks does not expand task scope or authority.

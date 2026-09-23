@@ -130,6 +130,10 @@ their source. Label illustrative output, edited demonstrations, simulations,
 and unverified paths. Explain a material omitted dependency or skipped check
 where it affects a reader's decision.
 
+Describe the current release in the present tense. Keep chronology in release
+notes; durable documentation does not describe behavior relative to earlier
+versions.
+
 ## Adapt to the surface
 
 - **READMEs and documentation landing pages:** orient the reader, establish
@@ -153,6 +157,9 @@ where it affects a reader's decision.
   or reference and keep operational procedures in their owning runbook. Date
   observations and decisions; preserve source material, historical proposals,
   and uncertainty. Do not reshape an immutable record to satisfy a page form.
+- **Documentation catalogs:** list reader documents only. Runbooks, release
+  checklists, evidence packs, and plans stay in contributor docs or the
+  knowledge base.
 
 ## Keep surfaces consistent
 
@@ -166,6 +173,9 @@ Change a generated surface through its source. Preserve stable links or supply
 redirects when moving pages. Use descriptive link text and meaningful headings;
 give images useful alternatives and videos an equivalent way to obtain the
 instruction. Keep code and tables readable on the supported display sizes.
+
+Keep one source tree per guide. When a website and GitHub both show the docs,
+generate one from the other.
 
 ## Review the changed path
 

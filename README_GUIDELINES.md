@@ -15,8 +15,8 @@ the linked framework distinguishes learning, tasks, reference, and explanation.
 
 Order the README around the reader's decisions:
 
-1. **What is this?** Name the product, its stable category, the problem
-   boundary, the mechanism that distinguishes it, and the outcome it enables.
+1. **What is this?** Say what the product is and what a reader can do with it,
+   in one or two plain sentences, using the product's registry description.
 2. **Why does it exist?** Explain the few design choices that determine when
    someone should use it. Pair each benefit with its mechanism and nearest
    limit.
@@ -27,8 +27,9 @@ Order the README around the reader's decisions:
 5. **What should I not infer?** Put compatibility, privacy, security, failure,
    and product-scope boundaries where the corresponding misunderstanding first
    becomes likely.
-6. **How are the claims checked?** Name the deterministic gate, meaningful
-   external checks, and any skipped or credential-gated evidence.
+6. **How can I check it?** Link the tests, benchmarks, or release verification
+   a reader can run or inspect, and name anything unverified. Keep CI job names
+   and internal gate names out of the README.
 7. **Where is the rest?** Link to deeper documentation by reader task.
 
 Complex, trust-sensitive tools often need every step. A small library may need
@@ -38,12 +39,10 @@ verification.
 ## Open with the durable product
 
 The first paragraph should survive a change in interface or implementation.
-Use one compact paragraph, with as many sentences as needed, to establish:
-
-- the product category and intended reader;
-- the concrete problem boundary;
-- the mechanism or invariant that differentiates the project; and
-- the result a user can obtain.
+Use one short paragraph: what it is, who it is for, and what they get. Put the
+mechanism in the next paragraph when it affects the reader's decision. Do not
+pack the category, boundary, mechanism, and outcome into one sentence; that
+makes a spec sheet.
 
 Describe the stable identity before today's interface. A tool can be a durable
 runtime even if the terminal is its current client. A package can own a data
@@ -55,12 +54,9 @@ language, but they must not make a different claim.
 
 ## Make “why” claims earn their space
 
-A useful “Why” item has four parts when the product supports them:
-
-- a short name for the value;
-- the mechanism that produces it;
-- behavior under failure or pressure; and
-- the nearest boundary or non-claim.
+A useful “Why” item names the value and the mechanism that produces it. State
+a limit where the misunderstanding first becomes likely, once. Do not end every
+item with a non-claim.
 
 Write “the importer validates every manifest before it opens the database,”
 then name what remains outside that guarantee. Avoid claims such as “powerful,”
@@ -69,7 +65,8 @@ evidence.
 
 Use the project's real vocabulary. Repeat a term when it names an invariant.
 Do not import words such as “bounded,” “canonical,” or “durable” merely because
-they sound technical.
+they sound technical. The internal-vocabulary list in [STYLE.md](STYLE.md)
+names the words that leak most often.
 
 ## Show one finished task
 
@@ -104,6 +101,9 @@ Treat limitations as product information:
 - keep a distinct security or trust boundary when generated code, credentials,
   private data, external effects, or untrusted input are involved; and
 - report a skipped external check as unverified, not passed.
+
+Keep release history out of the README; link `CHANGELOG.md` or GitHub Releases.
+Derive install versions from `package.json` and test them.
 
 The README must describe shipped behavior. Keep internal phases, ticket names,
 private paths, migration chronology, and assumed repository history out of the
@@ -184,13 +184,14 @@ harness or the regression risk makes the evidence worth maintaining.
   useful path.
 - Do not repeat the title, tagline, and summary in several decorative forms.
 - Keep contribution, security, license, and support paths easy to find.
+- Check that tables and footnotes render on GitHub (`gh api markdown -f mode=gfm`).
 
 ## Verify before merging
 
 Review the README as a user-facing change:
 
-- The opening names a category, boundary, differentiating mechanism, and
-  outcome without praise.
+- The opening says what the product is and what the reader can do with it,
+  in the registry description's words, without praise or internal vocabulary.
 - A new reader can reach one supported result without consulting the command
   reference.
 - Commands, versions, package names, links, and outputs match executable or
