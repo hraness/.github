@@ -57,7 +57,7 @@ Add the one that matches your output after the block. Essays and blog posts have
 
 ## Essay and blog post addendum
 
-This addendum covers the “Introducing” essay on a product's own site, the technique series about how Hraness builds software, product posts about one technique, and “How X uses Y” posts about one product's use of another. The article guide in [`@hraness/design-kit`](https://github.com/hraness/design-kit/blob/main/ARTICLE_COPY.md) (`ARTICLE_COPY.md`) holds the detailed rules for titles, summary lines, layout, and review records. Paste the block above into the drafting prompt, then this addendum.
+This addendum covers the “Introducing” essay on a product's own site, the technique series about how Hraness builds software, product posts about one technique, and “How X uses Y” posts about one product's use of another. The article guide, `ARTICLE_COPY.md` in `@hraness/design-kit`, holds the detailed rules for titles, summary lines, layout, and review records. Paste the block above into the drafting prompt, then this addendum.
 
 **Shapes.**
 
