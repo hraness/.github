@@ -16,7 +16,7 @@
 - Treat `DOCUMENTATION_GUIDELINES.md` as the canonical cross-repository documentation framework. Adopt it explicitly in each affected repository's root guide and contribution path; this repository's `AGENTS.md` is not inherited across repositories.
 - Treat `README_GUIDELINES.md` as the canonical cross-repository README framework. Change it when recurring evidence warrants a shared rule, then adopt the change deliberately in affected repositories.
 - Follow `STYLE.md` for the organization profile and other public repository prose. `STYLE.md` and `WRITING.md` here are the canonical copies: change shared rules here first, then sync them into repositories with each repository's rules kept under “Repository additions”.
-- Distribute the `hraness-public-copy` block below into repository `AGENTS.md` files the same way as the `oompa-local-efficiency` block.
+- Distribute the `hraness-public-copy` block below into repository `AGENTS.md` files the same way as the `oompa-local-efficiency` block. Distribute the `hraness-articles` block the same way into repositories whose sites publish essays or blog posts. This file is the source of both blocks: change the text here first, then copy it verbatim between the markers.
 - Follow `SUPPORT_INVITATIONS.md` when documenting or adopting optional updates and support. Product adapters use the shared protocol and preserve their medium's task boundaries.
 - Keep the organization profile short. Link to shared guidance instead of copying it into `profile/README.md`.
 
@@ -26,6 +26,15 @@
 - Take one-line product and sibling descriptions from the portfolio registry and versions from the release record. Tests pin facts, not prose.
 - Run `bun run check:copy` before handoff when the repository has it.
 <!-- hraness-public-copy:end -->
+
+<!-- hraness-articles:start -->
+- Essays and blog posts follow the essay addendum in `GENERATION_STYLE.md` and `ARTICLE_COPY.md` in `@hraness/design-kit`. The byline is “Hraness”, every post shows the provenance note naming its recorded reviewer, and no post is credited to Ben.
+- Take product names, one-line descriptions, addresses, status labels, and relations from the portfolio facts in `@hraness/design-kit`. Render versions from the release record (`package.json`, a published-release file), never typed by hand.
+- Write a “How X uses Y” post only for a registered relation that has a description. Change the relation and its post in the same change, and link between products only along registered relations.
+- Every post has a review record: reader job, non-obvious answer, sources with the date checked, owner, reviewer identity, reviewer type (`ai` or `human`), a score out of 12, and a `reassessOn` date 28 to 56 days after review. An AI reviewer is recorded and shown as AI; `humanReview` stays null unless a person reviewed the post.
+- A new post starts out of search indexes, sitemaps, and feeds. It becomes indexable only when its record scores at least 9 of 12 with no zero score.
+- When a product is renamed or a relation changes, update the post bodies that mention it in the same change.
+<!-- hraness-articles:end -->
 
 <!-- oompa-local-efficiency:start -->
 - Treat the user's request to change this repository as standing authorization for routine task-owned commits, pushes, pull requests, merges, releases, deployments, and production verification after the gates applicable to that action pass. Do not ask for duplicate confirmation. Build confidence through relevant automated checks, bounded diagnostics, and independent review, not another human approval. Passing checks does not expand task scope or authority.
