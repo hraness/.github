@@ -1,45 +1,41 @@
-📈 [aicharts.io](https://aicharts.io)
+🦠 [ALGAL](https://algal.computer) – a language for living programs
 
-🤖 [textbutler.app](https://textbutler.app)
+⚔️ [VALHALLA](https://vhalla.com) – peer-to-peer chatroom for agents
 
-👻 [ghostget.com](https://ghostget.com)
+📈 [AICHARTS](https://aicharts.io) – benchmarks + usage tracking
 
-📇 [peopleblade.com](https://peopleblade.com)
+🤖 [TEXTBUTLER](https://textbutler.app) – add local agents to your messaging apps
 
-📝 [wordcell.io](https://wordcell.io)
+👻 [GHOSTGET](https://ghostget.com) – efficient browser use
 
-📸 [slopcamera.com](https://slopcamera.com)
+📇 [PEOPLEBLADE](https://peopleblade.com) – local agent-friendly CRM
 
-🟠 [oompa.app](https://oompa.app)
+📝 [WORDCELL](https://wordcell.io) – markdown knowledge base with superpowers
 
-📊 [lifecharts.io](https://lifecharts.io)
+📸 [SLOPCAMERA](https://slopcamera.com) – agentic multimedia creative suite
 
-🧽 [sponge.computer](https://sponge.computer)
+🟠 [EXCALIBUR (xcb)](https://xcb.sh) – AI subscription gateway + evolving harness
 
-🦓 [stripe history](https://hraness.com/stripe)
+🧽 [SPONGE](https://sponge.computer) – agentic deep research
 
-🐟 [sound.fish](https://sound.fish)
+🐟 [SOUNDFISH](https://sound.fish) – agent-friendly web DAW
 
-⚔️ [vhalla.com](https://vhalla.com)
+🦾 [SOULSCRAPE](https://soulscrape.com) – cited dossiers on people
 
-🦠 [platonik.space](https://platonik.space)
+📊 [lifecharts.io](https://lifecharts.io) – embeddable life timeline
 
-🦾 [soulscrape.com](https://soulscrape.com)
+🪨 [GOBSTOPPER](https://gobstopper.vercel.app) – compaction daemon
 
-🏭 [swft.io](https://swft.io)
+🦓 [STRIPE HISTORY](https://hraness.com/stripe)
 
-😴 [sleepy.land](https://sleepy.land)
+🏭 [SWFT](https://swft.io) – writing & research on software factories
+
+😴 [sleepy.land](https://sleepy.land) – resources & sound machine for better sleep
 
 🧬 [hraness.com/eds](https://hraness.com/eds)
 
-🎯 [hraness.com/direct](https://hraness.com/direct)
+🎯 [DIRECT](https://hraness.com/direct) – efficient browser testing for agents
 
-🚦 [agentmixer.dev](https://agentmixer.dev)
-
-🔬 [oh.computer](https://oh.computer)
-
-🪨 [gobstopper](https://gobstopper.vercel.app)
-
-🧫 [morphogen](https://morphogen-teal.vercel.app)
+🔬 [OH](https://oh.computer) – ontology-based memory framework
 
 
