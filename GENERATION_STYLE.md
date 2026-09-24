@@ -64,16 +64,17 @@ This addendum covers the “Introducing” essay on a product's own site, the te
 - “Introducing {product}” runs on the product's own site. It explains what the product is for and why it exists, states its release status once, and links to the documentation instead of repeating the feature list.
 - A technique post has two halves that each stand alone. The first explains the method from primary sources: what it checks, what it misses, and what it costs. The second shows how one Hraness product applies it, citing source files, tests, and release records a reader can open, and states what the product's use does not cover.
 - “How {consumer} uses {provider}” runs on the consumer's site and exists only for a registered relation between the two products. Describe the call, data, or dependency the consumer's code has on the provider, using the relation's own description.
-- These two title formulas may repeat across a series. Every other title states the post's claim as a sentence.
+- A provider's hub page lists the “How {consumer} uses {provider}” posts for that provider, one line each, taken from the registered relations.
+- The “Introducing” and “How X uses Y” title formulas may repeat across a series. Every other title states the post's claim as a sentence.
 
 **Facts.** Take product names, one-line descriptions, addresses, status labels, and relations from the portfolio facts that ship with `@hraness/design-kit`. Take versions from the release record. Take every number from source code, test output, or a cited primary source with the date it was checked. Invent no number, benchmark, user, customer, quotation, or anecdote.
 
-**Voice and byline.** The byline is “Hraness”. Do not write in the first person as Ben or any other person, and do not attribute opinions, motives, habits, or experiences to a named person without a source that states them. Never credit an AI-drafted post to Ben. If a person later rewrites and adopts a post, the byline and the note below change to match what that person did.
+**Voice and byline.** The byline is “Hraness”. Do not write in the first person as the owner or any other person, and do not attribute opinions, motives, habits, or experiences to a named person without a source that states them. Never credit an AI-drafted post to a person. If a person later rewrites and adopts a post, the byline and the note below change to match what that person did.
 
-**Provenance note.** Every post, on every Hraness site, shows this note where readers can see it: “Drafted with AI from the source code and reviewed by {reviewer}.” The reviewer is the identity in the post's review record. An AI reviewer is named as an AI, for example “Claude Opus 5.5 (claude-opus-5-5) editorial review”. Never call an AI review a human review, and do not publish a post that has no review record.
+**Provenance note.** Every post, on every Hraness site, shows this note where readers can see it: “Drafted with AI from the source code and reviewed by {reviewer}.” The page renders the note from the post's review record; the drafting model does not write it into the body. The reviewer is a separate run or person from the one that drafted the post, and the record gives its identity and type. An AI reviewer is named as an AI, for example “Claude Opus 5.5 (claude-opus-5-5) editorial review”. Never call an AI review a human review, and do not publish a post that has no review record.
 
 **Series.** Give each post its own opening, first heading, and ending. Do not reuse an opening sentence pattern, a signpost opener, a closing heading, a closing checklist, or a disclaimer paragraph across the series. Check earlier posts in the series before drafting the next one.
 
-**Links.** Link to another post or product only where it is the reader's next step and the two products have a registered relation. Add no link lists, reciprocal links, or related-post sections to reach a count.
+**Links.** Link to another post or product only where it is the reader's next step: along a registered relation between two products, or between a technique post on hraness.com and a product's post about the same technique. Add no link lists, reciprocal links, or related-post sections to reach a count.
 
 **Style.** Everything in the block applies, including no em dashes and dates written as dates. End each post on its last supported point.
