@@ -1,41 +1,49 @@
-🦠 [ALGAL](https://algal.computer) – a language for living programs
+🌱 [ALGAL](https://algal.dev) – Language and VM for agent programs that wait for approval and resume
 
-⚔️ [VALHALLA](https://vhalla.com) – peer-to-peer chatroom for agents
+🏰 [VALHALLA](https://vhalla.com) – Peer-to-peer rooms where agents and their owners share signed work
 
-📈 [AICHARTS](https://aicharts.io) – benchmarks + usage tracking
+📈 [AI CHARTS](https://aicharts.io) – Model benchmark scores plotted against cost and tokens per task
 
-🤖 [TEXTBUTLER](https://textbutler.app) – add local agents to your messaging apps
+🤖 [TEXTBUTLER](https://textbutler.app) – AI butler for the iMessage, WhatsApp, and Beeper chats you choose
 
-👻 [GHOSTGET](https://ghostget.com) – efficient browser use
+👻 [GHOSTGET](https://ghostget.com) – Named web actions for AI agents: read pages, save media, use connected accounts
 
-📇 [PEOPLEBLADE](https://peopleblade.com) – local agent-friendly CRM
+📇 [PEOPLEBLADE](https://peopleblade.com) – Local personal CRM for everyone you know, built for your agent
 
-📝 [WORDCELL](https://wordcell.io) – markdown knowledge base with superpowers
+📝 [WORDCELL](https://wordcell.io) – Markdown knowledge base that gives agents the decisions behind code
 
-📸 [SLOPCAMERA](https://slopcamera.com) – agentic multimedia creative suite
+📸 [SLOPCAMERA](https://slopcamera.com) – Media studio for agents: images, 3D, animation, and video to revise
 
-🟠 [EXCALIBUR (xcb)](https://xcb.sh) – AI subscription gateway + evolving harness
+⚔️ [XCB](https://xcb.sh) – Routes coding tasks across the Claude, Codex, and Devin plans you have
 
-🧽 [SPONGE](https://sponge.computer) – agentic deep research
+🧽 [SPONGE](https://sponge.computer) – Private library for what you read, with notes your agent can cite
 
-🐟 [SOUNDFISH](https://sound.fish) – agent-friendly web DAW
+🐟 [SOUNDFISH](https://sound.fish) – Album pages with a waveform player and comments pinned to moments
 
-🦾 [SOULSCRAPE](https://soulscrape.com) – cited dossiers on people
+🦾 [SOULSCRAPE](https://soulscrape.com) – Free agent skill that writes dated dossiers on people, sources cited
 
-📊 [lifecharts.io](https://lifecharts.io) – embeddable life timeline
+📊 [LIFECHARTS](https://lifecharts.io) – Turn the chapters of your life into one timeline you can share
 
-🪨 [GOBSTOPPER](https://gobstopper.vercel.app) – compaction daemon
+🍬 [GOBSTOPPER](https://gobstopper.sh) – Compacts long agent sessions into smaller copies, keeping every byte
 
-🦓 [STRIPE HISTORY](https://hraness.com/stripe)
+🦓 [STRIPE HISTORY](https://hraness.com/stripe) – Independent history of Stripe where every event is dated and sourced
 
-🏭 [SWFT](https://swft.io) – writing & research on software factories
+🏭 [SWFT](https://swft.io) – Free publication about how companies put AI agents to work
 
-😴 [sleepy.land](https://sleepy.land) – resources & sound machine for better sleep
+💤 [SLEEPYLAND](https://sleepy.land) – Free sleep sounds made in your browser, with sourced sleep guides
 
-🧬 [hraness.com/eds](https://hraness.com/eds)
+🧬 [EDS RESEARCH INDEX](https://hraness.com/eds) – Ehlers-Danlos evidence stratified by kind, every record linked to sources
 
-🎯 [DIRECT](https://hraness.com/direct) – efficient browser testing for agents
+🎯 [DIRECT](https://hraness.com/direct) – Repeatable app states for browser agents, opened by URL
 
-🔬 [OH](https://oh.computer) – ontology-based memory framework
+📚 [OH](https://oh.computer) – Memory for agents that stores each fact with its sources and history
 
+⏱️ [ACT60](https://act60.me) – Estimate Act 60 savings after real costs, with sourced guides and a day tracker
 
+📡 [CLANKDAR](https://clankdar.com) – Fresh puzzles for AI agents, scored exactly, with a signed receipt
+
+🌧️ [ROUGH DAY](https://rough.day) – Daily front page that says why each story ranked and links its source
+
+📈 [SLOPTRADE](https://sloptrade.com) – Build prompt that turns a coding agent into a trading-system designer
+
+1️⃣ [SYS1](https://sys1.io) – Lets agents ask yes/no, choice, and score questions and get answers
