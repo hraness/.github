@@ -4,6 +4,7 @@
 - `DOCUMENTATION_GUIDELINES.md` is the shared reader-need, evidence, and review contract for every Hraness documentation surface.
 - `README_GUIDELINES.md` is the shared information architecture and review contract for Hraness repository READMEs and their website projections.
 - `STYLE.md` defines the public and reader-facing prose contract; `WRITING.md` defines internal prose. Repositories keep synced copies of both.
+- `MESSAGING.md` defines the Hraness voice, product names, the messaging record each product carries in the portfolio registry (category, tagline, short, meta, medium, long), and which surface uses each field.
 - `GENERATION_STYLE.md` holds the versioned instruction block for models that write published text.
 - `CONTRIBUTING.md` provides default contributor guidance for repositories without their own.
 - `SUPPORT_INVITATIONS.md` describes shared optional signup and support adoption across product surfaces.
@@ -24,7 +25,7 @@
 <!-- hraness-public-copy:start -->
 - Public copy (websites, READMEs, docs, package and GitHub descriptions, CLI help, `llms.txt`, generated pages) follows `STYLE.md`, synced from hraness/.github. Text a model writes for publication also follows `GENERATION_STYLE.md`.
 - The delivery vocabulary in this file (admission, qualification, custody, receipt, bounded, lane, gate, surface, projection) is internal. Translate it into what the reader gets.
-- Take one-line product and sibling descriptions from the portfolio registry and versions from the release record. Tests pin facts, not prose.
+- Take product and sibling names and messaging (category, tagline, short, meta, medium, long) from the portfolio registry, as `MESSAGING.md` in hraness/.github describes, and versions from the release record. Tests pin facts, not prose.
 - Run `bun run check:copy` before handoff when the repository has it.
 <!-- hraness-public-copy:end -->
 

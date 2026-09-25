@@ -79,10 +79,10 @@ Accuracy has priority over a local line-editing rule. Record a recurring excepti
 
 ## Keep one definition per product
 
-- Each product has one canonical one-line description in the portfolio registry. The page description, GitHub About text, package description, CLI introduction, README first sentence, `llms.txt` lead, and sibling sites use that line or a shortening of it.
+- Each product has one messaging record in the portfolio registry: a category, a tagline, and short, meta, medium, and long descriptions. [`MESSAGING.md`](https://github.com/hraness/.github/blob/main/MESSAGING.md) defines each field and the surfaces that use it. The page description, GitHub About text, package description, CLI introduction, README first paragraph, `llms.txt` summary, and sibling sites take their words from that record.
 - Shorten by cutting words from the original sentence. Do not replace plain words with house nouns: “a tool for creating a dossier on any person” should not become “evidence-backed dossiers and revisable models of people”.
 - Render repeated text from one constant: the visible FAQ and its JSON-LD, a page and its Markdown twin, a hidden agent layer and the visible page.
-- Describe a sibling product with its registry line. Say what two products do together only when both support it in shipped code, and take that sentence from the registry's relationships file.
+- Describe a sibling product with its registry name and `short` line. Say what two products do together only when both support it in shipped code, and take that sentence from the registry's relationships file.
 - Do not paste a marketing sentence into several repositories. Put shared copy in a shared component or the registry.
 
 ## Cite sources exactly
@@ -151,7 +151,7 @@ Readers trust a page that states its limits plainly. They skim a page that repea
 - Put literal input and interface values in `code`.
 - Use an ellipsis glyph (`…`) only when an action opens another input step.
 - Do not use em dashes in authored text: prose, titles, meta descriptions, social text, alt text, captions, image credits, list separators, and the templates that generate them. Rewrite the sentence instead of substituting a spaced hyphen. Quoted third-party titles keep their own punctuation. Use parentheses only for a short, necessary explanation.
-- Use each product's name exactly as the portfolio registry spells it, including case (xcb, Textbutler, AI Charts, Soundfish, Sys1). Do not use the repository slug or the domain as the name in prose, and do not use a product name as a common noun.
+- Use each product's prose name exactly as its messaging record spells it (`names.name`), including case (xcb, Textbutler, AI Charts, Soundfish, Sys1). The all-capitals `names.catalog` form belongs only in designs that set every name in capitals. Do not use the repository slug or the domain as the name in prose, and do not use a product name as a common noun.
 - Give each destination one label across the header, footer, breadcrumbs, and Markdown twins.
 - Make interpolated counts agree with their nouns (“1 check”, “2 checks”), and test zero, one, and several.
 - Spell out zero through nine in prose. Use numerals for 10 or more, measurements, dates, and money.
@@ -228,7 +228,7 @@ A prompt, skill, or template that makes a model write published text is public c
 - Tests pin facts: commands, versions, counts, limits, prices, legal text, and links that resolve. They do not pin headings, taglines, or prose sentences. When a test protects a limit, it asserts the limit in plain words.
 - Assert the shape of a real value, such as a run URL that matches `/runs/\d{10,}/`, never a placeholder.
 - A test or validator may require that a disclosure exists and matches the provenance record. It may not require a reviewer name or a review claim, except that an essay or blog post's provenance note must match its review record.
-- Guides, briefs, examples, schemas, and fixtures are copy one step removed; agents copy them word for word. Keep taglines, slogans, and internal vocabulary out of them. Do not define a field every item must fill (`closing`, `tagline`) whose role invites a closer or a slogan.
+- Guides, briefs, examples, schemas, and fixtures are copy one step removed; agents copy them word for word. Keep taglines, slogans, and internal vocabulary out of them. Do not define a field every item must fill, such as a `closing` line, whose role invites a closer or a slogan. A product's messaging `tagline` is a sentence with one claim the page proves, defined in `MESSAGING.md`.
 
 ## Say who wrote and who checked
 
