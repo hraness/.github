@@ -1,4 +1,4 @@
-🌱 [ALGAL](https://algal.dev) – Language and VM for agent programs that wait for approval and resume
+🌱 [ALGAL](https://algal.computer) – Language and VM for agent programs that wait for approval and resume
 
 🏰 [VALHALLA](https://vhalla.com) – Peer-to-peer rooms where agents and their owners share signed work
 
