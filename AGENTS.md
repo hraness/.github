@@ -4,6 +4,7 @@
 - `DOCUMENTATION_GUIDELINES.md` is the shared reader-need, evidence, and review contract for every Hraness documentation surface.
 - `README_GUIDELINES.md` is the shared information architecture and review contract for Hraness repository READMEs and their website projections.
 - `STYLE.md` defines the public and reader-facing prose contract; `WRITING.md` defines internal prose. Repositories keep synced copies of both.
+- `RELEASES.md` defines the GitHub Release page every product ships: title, summary, changes, install, verify, and the trailing identity record, with notes taken from `CHANGELOG.md`.
 - `MESSAGING.md` defines the Hraness voice, product names, the messaging record each product carries in the portfolio registry (category, tagline, short, meta, medium, long), and which surface uses each field.
 - `GENERATION_STYLE.md` holds the versioned instruction block for models that write published text.
 - `CONTRIBUTING.md` provides default contributor guidance for repositories without their own.
@@ -18,7 +19,7 @@
 - Treat `DOCUMENTATION_GUIDELINES.md` as the canonical cross-repository documentation framework. Adopt it explicitly in each affected repository's root guide and contribution path; this repository's `AGENTS.md` is not inherited across repositories.
 - Treat `README_GUIDELINES.md` as the canonical cross-repository README framework. Change it when recurring evidence warrants a shared rule, then adopt the change deliberately in affected repositories.
 - Follow `STYLE.md` for the organization profile and other public repository prose. `STYLE.md` and `WRITING.md` here are the canonical copies: change shared rules here first, then sync them into repositories with each repository's rules kept under “Repository additions”.
-- Distribute the `hraness-public-copy` and `hraness-ci` blocks below into repository `AGENTS.md` files the same way as the `hraness-delivery` block (`hraness-ci` goes into every repository that has a `.github/workflows` directory). Distribute the `hraness-articles` block the same way into repositories whose sites publish essays or blog posts. This file is the source of both blocks: change the text here first, then copy it verbatim between the markers.
+- Distribute the `hraness-public-copy` and `hraness-ci` blocks below into repository `AGENTS.md` files the same way as the `hraness-delivery` block (`hraness-ci` goes into every repository that has a `.github/workflows` directory). Distribute the `hraness-releases` block the same way into every repository that publishes GitHub Releases. Distribute the `hraness-articles` block the same way into repositories whose sites publish essays or blog posts. This file is the source of every block: change the text here first, then copy it verbatim between the markers.
 - Follow `SUPPORT_INVITATIONS.md` when documenting or adopting optional updates and support. Product adapters use the shared protocol and preserve their medium's task boundaries.
 - Keep the organization profile short. Link to shared guidance instead of copying it into `profile/README.md`.
 
@@ -28,6 +29,11 @@
 - Take product and sibling names and messaging (category, tagline, short, meta, medium, long) from the portfolio registry, as `MESSAGING.md` in hraness/.github describes, and versions from the release record. Tests pin facts, not prose.
 - Run `bun run check:copy` before handoff when the repository has it.
 <!-- hraness-public-copy:end -->
+
+<!-- hraness-releases:start -->
+- GitHub Release pages follow `RELEASES.md` in hraness/.github: the title is the registry product name and the tag, and the body is a summary, `## Changes`, `## Install`, `## Verify`, then the repository's identity record as a trailing HTML comment.
+- The summary and changes come from the version's section of `CHANGELOG.md` in the tagged commit. Write that section in the version bump pull request. The release workflow copies it, generates Install and Verify from the release record, fails when the section is missing or empty, and never uses GitHub's generated notes.
+<!-- hraness-releases:end -->
 
 <!-- hraness-articles:start -->
 - Essays and blog posts follow the essay addendum in `GENERATION_STYLE.md` and `ARTICLE_COPY.md` in `@hraness/design-kit`. The byline is “Hraness”, every post shows the provenance note naming its recorded reviewer, and no AI-drafted post is credited to a person unless that person rewrites and adopts it.
