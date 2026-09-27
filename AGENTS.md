@@ -4,6 +4,7 @@
 - `DOCUMENTATION_GUIDELINES.md` is the shared reader-need, evidence, and review contract for every Hraness documentation surface.
 - `README_GUIDELINES.md` is the shared information architecture and review contract for Hraness repository READMEs and their website projections.
 - `STYLE.md` defines the public and reader-facing prose contract; `WRITING.md` defines internal prose. Repositories keep synced copies of both.
+- `CLI_MENU_STYLE.md` defines how every Hraness command-line tool and menu bar menu reads and behaves: the no-argument screen, help, version, errors, symbols, color, pipes, the menu layout and symbol names, permission notice copy, and the build-governance workflows that check them.
 - `RELEASES.md` defines the GitHub Release page every product ships: title, summary, changes, install, verify, and the trailing identity record, with notes taken from `CHANGELOG.md`.
 - `MESSAGING.md` defines the Hraness voice, product names, the messaging record each product carries in the portfolio registry (category, tagline, short, meta, medium, long), and which surface uses each field.
 - `GENERATION_STYLE.md` holds the versioned instruction block for models that write published text.
