@@ -169,7 +169,7 @@ Textbutler                          the product name, once
 
 | State | Status row | Primary action |
 | --- | --- | --- |
-| Starting | ↻ "Starting Textbutler…" | none until ready (the only menu without one) |
+| Starting | ↻ "Starting Textbutler" | none until ready (the only menu without one) |
 | Signed out | "Signed out" | "Sign in", opens the browser |
 | Needs a permission | 🔒︎ "Needs Full Disk Access" | "Open Full Disk Access settings" |
 | Service down | ⊘ "Textbutler isn't running" | "Start Textbutler" |
@@ -213,7 +213,7 @@ In menus, ⚠︎ carries U+FE0E. On the command line, ⚠ carries no selector.
 
 Before macOS shows a permission prompt, say what it will ask and why. After a denial, say it was a denial, name the pane, and give one next step. The permission kit in desktop-foundation (`hraness-cli-kit` in Rust) renders this copy from presets; products pass their name and, where a preset asks, the reason.
 
-- Name the product, and name the requester as macOS will show it. Before the product has its own app, the requester is the terminal app or executable, and the copy adds "for {product}".
+- Name the product, and name the requester as macOS will show it. Before the product has its own app, the requester is the terminal app or executable: `{forProduct}` becomes " for {product}" and `{thatsProduct}` becomes ". That's {product}'s menu bar". Once the requester is the product, both are empty.
 - Ask for Enter only when macOS will show a dialog that needs a decision. A login-item notice needs no confirmation.
 - Never wait for input unless stdin and stderr are both terminals.
 - An agent gets one JSON line on stderr instead: `{"type":"permission-notice","product","kind","message"}`. `quiet` gets nothing.
@@ -311,7 +311,7 @@ jobs:
       command-goldens: test/golden/*.help.txt
 ```
 
-- `cli-golden.yml` runs the built tool with no arguments, `--help`, each `<cmd> --help`, `--version`, an unknown command, `--json` and `AI_AGENT=1` errors, `NO_COLOR=1` on a terminal, `TERM=dumb`, a pipe, and `--help | head -1`, then checks D2 through D8.
+- `cli-golden.yml` runs the built tool with no arguments, `--help`, each `<cmd> --help`, `--version`, an unknown command, `--json` and `AI_AGENT=1` errors, `NO_COLOR=1` on a terminal, `TERM=dumb`, a pipe, and `--help | head -1`, then checks D2 through D6 and the pipe rule in D8. Ctrl-C handling is not checked.
 - `ux-copy.yml` checks captured help for sentence case, unexplained delivery words, and line budgets, and runs desktop-foundation's `lint-menu --strict` over the menu fixtures.
 
 To make a check required once its findings are fixed, pass `mode: required` and add the calling job to the `needs` list of the workflow's `Required` job.
