@@ -196,6 +196,7 @@ Readers trust a page that states its limits plainly. They skim a page that repea
 - Name the consequence in a confirmation. Repeat the exact verb and object for a destructive action.
 - Use nouns for labels. Use placeholders for a format or example, not a repeated label.
 - State the completed result in past tense in a toast notification.
+- Follow [`CLI_MENU_STYLE.md`](https://github.com/hraness/.github/blob/main/CLI_MENU_STYLE.md) for command-line output, menu bar menus, and macOS permission notices.
 
 ## Vary a generated series
 
