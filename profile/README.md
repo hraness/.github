@@ -1,3 +1,5 @@
+[Hraness](https://hraness.com) is a software studio that makes tools for AI agents and for people, from agent memory to music. Most are open source. [See every project](https://hraness.com/projects).
+
 🌱 [ALGAL](https://algal.computer) – Language and VM for agent programs that wait for approval and resume
 
 🏰 [VALHALLA](https://vhalla.com) – Peer-to-peer rooms where agents and their owners share signed work
@@ -46,4 +48,4 @@
 
 📈 [SLOPTRADE](https://sloptrade.com) – Build prompt that turns a coding agent into a trading-system designer
 
-1️⃣ [SYS1](https://sys1.io) – Lets agents ask yes/no, choice, and score questions and get answers
+1️⃣ [SYS1](https://sys1.io) – Helps coding agents review changes against repository rules
