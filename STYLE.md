@@ -107,6 +107,18 @@ Most Hraness copy is drafted by agents working inside repository guides full of 
 - Remove unverifiable superlatives such as “the first” and “the only” unless a cited source supports them.
 - Keep repository instructions and tests from demanding reader-hostile copy. When a guide or test requires a status phrase on every page, change the requirement to the fact that must stay true and let the page say it plainly.
 
+## Give marketing pages a readable path
+
+- Start with what the product helps someone do, who it is for, and a useful next action. Introduce implementation details only when they help that reader choose or use the product.
+- Make each section answer the next question a visitor is likely to have. Remove a section when it repeats the introduction or explains internal work without helping that decision.
+- Use a preview to show a recognizable task and a useful result. A CLI help dump, test log, checksum, or release-verification link does not show a product's value unless that is the product's actual task. Omit a preview that adds no useful example.
+- Keep release inspection, protocol contracts, configuration details, and maintainer evidence in the install guide or reference. Label links by what readers can do there, such as “Get started” or “See an example”.
+- Keep examples truthful. Label illustrations as examples, and never present invented output, timings, customer data, or completion claims as a recorded run.
+- Render code and executable commands with the shared syntax highlighter and the correct language. Do not bypass it with a bare code block or manually colored text. Keep natural-language prompts and non-code output readable as text.
+- Use the shared terminal frame for shell commands and terminal interactions. Use a code block for source files and structured data; do not dress ordinary prose in terminal chrome. Apply the same treatment to equivalent examples across sites.
+- Copy controls copy executable input without shell prompts or displayed output. Preserve complete commands, keyboard access, readable colors in both themes, and horizontal scrolling for long lines on narrow screens.
+- Review the page as a new visitor at desktop and phone widths. Confirm that the headline, example, and next action make sense before reading the documentation, and that essential limits appear beside the claims they qualify.
+
 ## State each limit once
 
 Readers trust a page that states its limits plainly. They skim a page that repeats them.

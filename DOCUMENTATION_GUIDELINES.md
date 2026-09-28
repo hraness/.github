@@ -141,8 +141,10 @@ versions.
   contain short, distinct sections without becoming four manuals.
 - **Product and marketing pages:** explain fit and show evidence for the
   current capability. Preserve their own reader journey and link to operating
-  documentation. Do not force promotional copy into a tutorial or substitute
-  it for instructions.
+  documentation. A preview should show a reader's task and result; help output
+  and release checks belong in reference or installation pages. Use the shared
+  syntax highlighter for code and the terminal frame for shell interactions.
+  Do not force promotional copy into a tutorial or substitute it for instructions.
 - **CLI help and API or SDK reference:** prioritize exact syntax and behavior,
   then link to task examples. Keep generated facts owned by the interface
   definition; check documented examples against the exposed entry point.
