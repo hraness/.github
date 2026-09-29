@@ -2,7 +2,7 @@
 
 This guide sets how every Hraness command-line tool looks, reads, and behaves, so a person who learns one product can use the next. [`STYLE.md`](STYLE.md) governs every sentence; this guide adds the layout, symbols, budgets, shared commands, and exit codes that sentences sit in.
 
-Hraness products have no menu bar. Since desktop-foundation 1.0 a person watches a product with `<product> tui`, a script or agent reads `<product> status --json`, and every action a menu used to offer is a command. The full specifications live in desktop-foundation: [headless control](https://github.com/hraness/desktop-foundation/blob/main/docs/control.md) (the envelope, error codes, verb registry, and owner process), [the human gate](https://github.com/hraness/desktop-foundation/blob/main/docs/human-gate.md), [permission notices](https://github.com/hraness/desktop-foundation/blob/main/docs/permissions.md), and [the 0.9 to 1.0 migration](https://github.com/hraness/desktop-foundation/blob/main/docs/migration-1.0.md). Use this page to write and review; use those pages to implement. When they disagree, desktop-foundation wins and this page is fixed.
+Hraness products have no menu bar. Since desktop-foundation 1.0 a person watches a product with `<product> tui`, a script or agent reads `<product> status --json`, and every action a menu used to offer is a command. The full specifications live in desktop-foundation: [headless control](https://github.com/hraness/desktop-foundation/blob/main/docs/control.md) (the envelope, error codes, verb registry, and owner process), [the human gate](https://github.com/hraness/desktop-foundation/blob/main/docs/human-gate.md), [permission notices](https://github.com/hraness/desktop-foundation/blob/main/docs/permissions.md), and [the 0.9 to 1.0 migration](https://github.com/hraness/desktop-foundation/blob/main/docs/migration-1.0.md). Use this page to write and review; use those pages to implement. For the envelope, error codes, exit codes, operation classes, and the human gate, desktop-foundation's contract files win and this page is fixed when they disagree. For text a person reads (help, errors, symbols, notices), this page is the standard, and output from the kits that misses it is a bug to fix in the kit. [Known gaps](#known-gaps-in-the-kits) lists the ones open today.
 
 ## Who is reading
 
@@ -13,7 +13,7 @@ Every tool decides who is reading before it prints anything, in this order:
 3. `human` when stderr is a terminal.
 4. `quiet` otherwise.
 
-`--json` always produces JSON. An agent gets JSON by default from commands that have a `--json` form. `quiet` prints plain text: no color, progress, hints, or invitations, and it never waits for input. Use `detectAudience()` from `@hraness/desktop-foundation` or `audience::detect` from the `hraness-cli-kit` crate instead of writing the rule again.
+`--json` always produces JSON. Tools built on `hraness-cli-kit` also print JSON to an agent that did not pass `--json`; the verb registry prints JSON only with `--json`, so an agent should always pass it. `quiet` prints plain text: no color, progress, hints, or invitations, and it never waits for input. Use `detectAudience()` from `@hraness/desktop-foundation` or `audience::detect` from the `hraness-cli-kit` crate instead of writing the rule again.
 
 The audience chooses wording and format only. It never lets a command skip [the human gate](#c5-decisions-a-person-owns).
 
@@ -97,8 +97,8 @@ Example
 - Line 1 is `✗` and one sentence saying what happened, then `: why` when known. Line 2 is `→` and exactly one next command. Nothing else by default.
 - Never a stack trace, usage dump, error code, or JSON object in text mode. `--debug` or `HRANESS_DEBUG=1` adds the code and trace below.
 - A usage error names the input and suggests the closest match, then exits 2: `✗ Unknown command "stauts". Did you mean "status"?` and `→ textbutler --help`. A missing argument points at that command's help: `→ textbutler chats add --help`. An unknown option is a usage error too, and the command does not run.
-- With `--json` or an agent reading, the error goes to stdout as the error envelope in [C4](#c4-the-json-envelope), with the same exit code.
-- Commands not yet on the verb registry may still print the older `hraness-cli-kit` shape, `{"ok":false,"error":{"code":"…","message":"…","next":"…"}}`, where a permission failure adds `"permission":{"kind","settingsUrl"}`. Move them to the envelope when the product adopts the registry.
+- With `--json`, the error goes to stdout as the error envelope in [C4](#c4-the-json-envelope), with the same exit code.
+- Commands not yet on the verb registry may still print the older `hraness-cli-kit` shape, `{"ok":false,"error":{"code":"…","message":"…","next":"…"}}`. A macOS permission failure keeps that shape, with `"permission":{"kind","settingsUrl"}`, from `permissionErrorJson`: the envelope has no place for the settings link yet.
 
 ### D6. Symbols, color, and terminals
 
@@ -144,7 +144,7 @@ Next: textbutler chats on Mom
 ### D8. Pipes and interrupts
 
 - `<cli> --help | head -1` ends quietly: no panic, trace, or `EPIPE`. In Rust, restore `SIGPIPE` to its default at the top of `main` or treat a broken pipe as a quiet exit. In Node and Bun, exit 0 on `EPIPE` from stdout.
-- Ctrl-C restores the terminal and exits 130, printing at most `✗ Stopped.` In `tui`, Ctrl-C, `q`, and Esc quit and restore the terminal.
+- Ctrl-C restores the terminal and exits 130, printing at most `✗ Stopped.` The interactive `tui` is the exception: there Ctrl-C, `q`, and Esc are keys that quit, restore the terminal, and exit 0.
 
 ### D9. Golden tests
 
@@ -168,7 +168,7 @@ Every product offers the same few commands for health, discovery, watching, and 
 <p> commands          --json                            read     every verb: path, class, schema, summary, gate
 <p> tui               [--snapshot | --json] [--width N] read     a live view on a terminal; a snapshot otherwise
 <p> doctor            [--json]                          read     platform, release, helper, owner, login items, retired items
-<p> control serve     [--foreground]                    –        owner products only; runs the owner
+<p> control serve     [--foreground]                    operate  owner products only; runs the owner
 <p> control status    [--json]                          read     whether an owner answers; never signals
 <p> control stop      [--json]                          operate  asks the owner to stop over its socket
 <p> control install | uninstall [--json]                decide   an opt-in login item that starts the owner
@@ -213,13 +213,13 @@ A verb whose class depends on its input, such as `approvals decide`, is register
 Every command that takes `--json` prints exactly one JSON object, on one line, on stdout:
 
 ```json
-{"ok":true,"schema":"textbutler.status/1","generatedAt":"2026-09-28T00:00:00.000Z","data":{},"next":[]}
-{"ok":false,"schema":"hraness.error/1","generatedAt":"2026-09-28T00:00:00.000Z","error":{"code":"not-found","message":"No approval a1.","next":[]}}
+{"ok":true,"schema":"textbutler.status/1","generatedAt":"2026-09-28T00:00:00.000Z","data":{}}
+{"ok":false,"schema":"hraness.error/1","generatedAt":"2026-09-28T00:00:00.000Z","error":{"code":"not-found","message":"No approval a1."}}
 ```
 
 - `schema` names the shape of `data` as `<product>.<noun>/<n>`. Raise `<n>` when the shape changes in a way a reader would notice.
 - `generatedAt` is UTC with milliseconds.
-- `next` lists follow-up commands as `{command, why, audience}`, where `audience` is `agent` or `human`. A step for a person keeps every argument, with flags written as `--flag=value`, so it runs back to the same input.
+- `next`, when present, lists follow-up commands as `{command, why, audience}`, where `audience` is `agent` or `human`. A step for a person keeps every argument, with flags written as `--flag=value`, so it runs back to the same input.
 - `error.code` is one of the codes in [D1](#d1-streams-and-exit-codes) or a product code. `error.detail` holds extra text, such as the underlying message of an unexpected `internal` failure.
 - The exit code matches `error.code`, as in the table in D1.
 
@@ -231,10 +231,10 @@ A `decide` verb asks for a person through the human gate: the command needs a fo
 - Run with `--json` by an agent or a quiet audience, a `decide` verb never prompts. It exits 3 with `human-required` and a `next` step whose audience is `human`, naming the exact command to run:
 
 ```json
-{"ok":false,"schema":"hraness.error/1","generatedAt":"2026-09-28T00:00:00.000Z","error":{"code":"human-required","message":"`textbutler approvals decide` is a decision for a person. Nothing changed.","next":[{"command":"textbutler approvals decide a1 --digest=3f2a allow-once","why":"Run this in your own terminal to decide.","audience":"human"}]}}
+{"ok":false,"schema":"hraness.error/1","generatedAt":"2026-09-28T00:00:00.000Z","error":{"code":"human-required","message":"`textbutler approvals decide` is a decision for a person. Nothing changed.","next":[{"command":"textbutler approvals decide a1 allow-once --digest=3f2a","why":"Run this in your own terminal to decide.","audience":"human"}]}}
 ```
 
-- `HRANESS_AUDIENCE=human` and `--confirm` change wording only. They never satisfy the gate.
+- `HRANESS_AUDIENCE=human`, and `--confirm` on a verb that declares it, change wording only. They never satisfy the gate.
 - The owner checks the digest again when it applies the decision. If the thing being decided changed in between, the verb exits 5 with `digest-mismatch`. A stale `--expected-revision` exits 5 with `conflict`.
 - The gate stops an agent making a person's decision by accident or because a prompt told it to. It is not a boundary against a determined program running as the same user; [the human gate](https://github.com/hraness/desktop-foundation/blob/main/docs/human-gate.md#threat-model) says what it does and does not stop. Do not describe it as more.
 
@@ -294,7 +294,7 @@ For the keychain, the second line ends "Enter your Mac password if asked, then c
 
 When a prompt is coming and there is no terminal, the helper shows one native dialog (`hraness-helper --notice`): the title `{product} needs access to {target}` (or `{product} needs {pane}`), the notice's first two lines as one paragraph, and "Continue" or "Open System Settings" beside "Not now". A login item shows no dialog: running the product's command that installs it, such as `control install`, is the consent.
 
-In `status`, `tui`, and `doctor`, a missing permission is a `⚠` line naming the pane, with the command that fixes it as the next step:
+In `status`, `tui`, and `doctor`, a missing permission is a `⚠` line naming the pane, with the command that fixes it as the next step. No kit renders these lines yet; products write them from this table:
 
 | State | Line | Next step |
 | --- | --- | --- |
@@ -343,6 +343,15 @@ jobs:
 
 - `cli-golden.yml` runs the built tool with no arguments, `--help`, each `<cmd> --help`, `--version`, an unknown command, `--json` and `AI_AGENT=1` errors, `NO_COLOR=1` on a terminal, `TERM=dumb`, a pipe, and `--help | head -1`, then checks D2 through D6 and the pipe rule in D8. Ctrl-C handling is not checked.
 - `ux-copy.yml` checks captured help for sentence case, unexplained delivery words, and line budgets. Leave its `menu-fixtures` input unset: there are no menus to check.
-- Neither workflow checks the shared commands yet. Keep the goldens in D9 in the product's own tests until one does.
+- Neither workflow checks the shared commands yet, and `cli-golden.yml` v0.3.0 still expects the older error shape: it warns that a C4 envelope has no `error.next` command. Keep the goldens in D9 in the product's own tests, and treat that warning as known, until build-governance catches up.
 
 To make a check required once its findings are fixed, pass `mode: required` and add the calling job to the `needs` list of the workflow's `Required` job.
+
+## Known gaps in the kits
+
+desktop-foundation 1.0.0 does not yet meet every rule above. Until it does, a product keeps its own handling where the kit falls short:
+
+- The verb registry's `runCli` prints its own text errors (`usage: Unknown command: stauts.` then `  next: …`) instead of the D5 format, and suggests no close match. Products that care about D5 handle unknown commands and options before calling it.
+- Registry help prints `usage:` in lowercase, the operation class, and the gate tier, and has no `help <cmd>` or `help advanced` form. `ux-copy.yml` flags the word "gate" in it.
+- `runCli` prints the error envelope only with `--json`, not to an agent without it.
+- The envelope has no field for a macOS permission's settings link, so `permissionErrorJson` keeps the older error shape.
