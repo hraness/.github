@@ -22,7 +22,7 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
-import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, realpath, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { availableParallelism, tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -92,7 +92,24 @@ export function formatFailures(failures, limit = 50) {
   return `${failures.length} public-site browser check(s) failed:\n${lines.join("\n")}`;
 }
 
+// Use Playwright's versioned executable, never a channel or a system-browser fallback.
+export async function provisionedBrowserOptions(chromium, resolveExecutable = realpath) {
+  const configured = chromium.executablePath();
+  let executablePath;
+  try { executablePath = await resolveExecutable(configured); }
+  catch (cause) { throw new Error("Provision the pinned Playwright browser with your repository's Playwright install chromium command before running this check.", { cause }); }
+  assert.ok(!/(?:^|[/\\])Google Chrome(?: Beta| Dev| Canary)?\.app(?:[/\\]|$)/iu.test(executablePath), "Automated checks must use provisioned Playwright Chromium or Chrome for Testing, not installed Google Chrome");
+  return { executablePath, args: ["--mute-audio", "--disable-features=PaintHolding,MacAppCodeSignClone"] };
+}
+
 async function selfTest() {
+  const chromium = { executablePath: () => "/cache/playwright/chromium/chrome" };
+  const options = await provisionedBrowserOptions(chromium, async path => path);
+  assert.equal(options.executablePath, chromium.executablePath());
+  assert.ok(options.args.includes("--disable-features=PaintHolding,MacAppCodeSignClone"));
+  await assert.rejects(provisionedBrowserOptions(chromium, async () => "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"), /not installed Google Chrome/u);
+  await assert.rejects(provisionedBrowserOptions(chromium, async () => { throw new Error("ENOENT"); }), /Provision the pinned Playwright browser/u);
+
   assert.equal(defaultConcurrency(2), 2);
   assert.equal(defaultConcurrency(4), 3);
   assert.equal(positiveInteger(undefined, "x"), undefined);
@@ -180,7 +197,10 @@ async function main(argv) {
     }
 
     const { chromium } = await import("playwright-core");
-    browser = await chromium.launch({ args: ["--mute-audio", "--disable-features=PaintHolding,MacAppCodeSignClone"] });
+    const browserOptions = await provisionedBrowserOptions(chromium);
+    console.log(`Browser executable: ${browserOptions.executablePath}`);
+    browser = await chromium.launch(browserOptions);
+    console.log(`Browser version: ${browser.version()}`);
     const settled = await pool(contexts, concurrency, async ({ width, theme, name }, index) => {
       const context = await browser.newContext({ viewport: { width, height: HEIGHTS[width] ?? 900 }, colorScheme: theme, hasTouch: width < 600 });
       try {
