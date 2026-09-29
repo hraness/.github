@@ -1,0 +1,6 @@
+{
+ "public-tool": "public",
+ "private-app": "private",
+ "private-site": "private",
+ "private-idle": "private"
+}
