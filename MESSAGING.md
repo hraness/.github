@@ -123,7 +123,7 @@ Launch-day social posts are cut from the beats of the product's “Introducing {
 | --- | --- | --- |
 | X thread | one post per beat | 280 weighted characters; a link counts as 23 |
 | Bluesky | one post per beat | 300 characters |
-| Threads, Mastodon | one post per beat | 500 characters |
+| Threads | one post per beat | 500 characters |
 | LinkedIn post | the first beat as the opening, then the others as short paragraphs | 3,000 characters; the first 210 show before “see more” |
 | 9:16 video captions | one beat per card | 2 lines of 42 characters |
 | Image alt text, every channel | the beat's alt text | 125 characters |
