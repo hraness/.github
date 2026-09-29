@@ -351,7 +351,7 @@ To make a check required once its findings are fixed, pass `mode: required` and 
 
 desktop-foundation 1.0.0 does not yet meet every rule above. Until it does, a product keeps its own handling where the kit falls short:
 
-- The verb registry's `runCli` prints its own text errors (`usage: Unknown command: stauts.` then `  next: …`) instead of the D5 format, and suggests no close match. Products that care about D5 handle unknown commands and options before calling it.
+- The verb registry's `runCli` prints its own text errors (`usage: Unknown command: stauts.` then `  next: …`) instead of the D5 format, and suggests no close match. Products handle unknown commands and options before calling it.
 - Registry help prints `usage:` in lowercase, the operation class, and the gate tier, and has no `help <cmd>` or `help advanced` form. `ux-copy.yml` flags the word "gate" in it.
 - `runCli` prints the error envelope only with `--json`, not to an agent without it.
 - The envelope has no field for a macOS permission's settings link, so `permissionErrorJson` keeps the older error shape.
