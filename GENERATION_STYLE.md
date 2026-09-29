@@ -81,7 +81,7 @@ This addendum covers the “Introducing” essay on a product's own site, the te
 
 ## Launch beats and social posts addendum
 
-This addendum covers the beats of an “Introducing {product}” post and the social posts made from them: an X thread, Bluesky, Threads, Mastodon, a LinkedIn post, and the captions of a vertical video. `ARTICLE_COPY.md` in `@hraness/design-kit` defines the beats shape under “Introducing a product”, and `MESSAGING.md` gives each channel's limits. Paste the block above into the drafting prompt, then the essay addendum, then this addendum.
+This addendum covers the beats of an “Introducing {product}” post and the social posts made from them: an X thread, Bluesky, Threads, a LinkedIn post, and the captions of a vertical video. `ARTICLE_COPY.md` in `@hraness/design-kit` defines the beats shape under “Introducing a product”, and `MESSAGING.md` gives each channel's limits. Paste the block above into the drafting prompt, then the essay addendum, then this addendum.
 
 **One claim per post.** Each beat is also a post, and each post stands alone: a reader who sees only that post learns one true thing about the product. Do not continue a sentence across posts or refer to “above” or “the next post”.
 

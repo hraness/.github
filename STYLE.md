@@ -176,7 +176,7 @@ Readers trust a page that states its limits plainly. They skim a page that repea
 
 ## Write social text
 
-- Posts on X, Bluesky, Threads, Mastodon, and LinkedIn follow every rule here, including no em dashes and no exclamation marks.
+- Posts on X, Bluesky, Threads, and LinkedIn follow every rule here, including no em dashes and no exclamation marks.
 - Use no emoji, hashtags, or thread numbering unless a repository addition allows them for one channel.
 - Keep image alt text to 125 characters or fewer.
 - Link the canonical URL without tracking parameters.
