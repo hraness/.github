@@ -1,0 +1,19 @@
+{
+ "budgets": [
+  {
+   "budget_type": "ProductPricing",
+   "budget_product_sku": "actions",
+   "budget_scope": "organization",
+   "budget_amount": 20,
+   "prevent_further_usage": true
+  },
+  {
+   "budget_type": "ProductPricing",
+   "budget_product_sku": "codespaces",
+   "budget_scope": "organization",
+   "budget_amount": 0,
+   "prevent_further_usage": true
+  }
+ ],
+ "total_count": 2
+}

@@ -1,0 +1,42 @@
+# Reusable CI cost lint. Call it from a repository's workflow:
+#
+#   jobs:
+#     cost-lint:
+#       uses: hraness/.github/.github/workflows/ci-cost-lint.yml@main
+#
+# Findings fail the job only in private repositories, whose minutes are billed.
+name: CI cost lint
+
+on:
+  workflow_call:
+    inputs:
+      linter-ref:
+        description: Ref of hraness/.github that provides scripts/ci-cost-lint.py
+        type: string
+        default: main
+
+permissions:
+  contents: read
+
+jobs:
+  cost-lint:
+    name: CI cost lint
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/workflows
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: hraness/.github
+          ref: ${{ inputs.linter-ref }}
+          path: .hraness-ci-cost-lint
+          persist-credentials: false
+          sparse-checkout: scripts/ci-cost-lint.py
+          sparse-checkout-cone-mode: false
+      - name: Lint workflows
+        env:
+          VISIBILITY: ${{ github.event.repository.private && 'private' || 'public' }}
+        run: python3 .hraness-ci-cost-lint/scripts/ci-cost-lint.py . --visibility "$VISIBILITY"
