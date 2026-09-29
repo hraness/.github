@@ -14,6 +14,10 @@ on:
         description: Ref of hraness/.github that provides scripts/ci-cost-lint.py
         type: string
         default: main
+      visibility:
+        description: "`private` or `public`; empty looks it up (schedule events carry no repository payload)"
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -38,5 +42,15 @@ jobs:
           sparse-checkout-cone-mode: false
       - name: Lint workflows
         env:
-          VISIBILITY: ${{ github.event.repository.private && 'private' || 'public' }}
-        run: python3 .hraness-ci-cost-lint/scripts/ci-cost-lint.py . --visibility "$VISIBILITY"
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          INPUT_VISIBILITY: ${{ inputs.visibility }}
+          EVENT_PRIVATE: ${{ github.event.repository && (github.event.repository.private && 'private' || 'public') || '' }}
+        run: |
+          visibility="${INPUT_VISIBILITY:-$EVENT_PRIVATE}"
+          if [ -z "$visibility" ]; then
+            visibility="$(gh api "repos/$REPO" --jq .visibility)"
+          fi
+          # internal repositories are billed like private ones
+          [ "$visibility" = public ] || visibility=private
+          python3 .hraness-ci-cost-lint/scripts/ci-cost-lint.py . --visibility "$visibility"

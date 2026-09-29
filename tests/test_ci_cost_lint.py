@@ -128,6 +128,36 @@ jobs:
         self.assertTrue(any("setup-node" in f.message for f in findings))
         self.assertFalse(any("setup-python" in f.message for f in findings))
 
+    def test_negated_main_guard_still_saves_on_pull_requests(self):
+        step = "      - uses: actions/cache/save@v5\n        if: {guard}\n        with: {{path: x, key: y}}\n"
+        head = "on: pull_request\nconcurrency: {group: x, cancel-in-progress: true}\njobs:\n  a:\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    steps:\n"
+        for guard, expected in (
+            ("github.ref != 'refs/heads/main'", [("a", "pr-cache-save")]),
+            ("github.ref == 'refs/heads/main'", []),
+            ('github.ref_name == "main"', []),
+        ):
+            with self.subTest(guard=guard):
+                self.assertEqual(rules(head + step.format(guard=guard)), expected)
+
+    def test_deploy_job_must_not_group_by_sha(self):
+        text = """
+on:
+  push:
+    branches: [main]
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: production
+    steps: []
+"""
+        self.assertEqual(rules(text), [("deploy", "deploy-sha-group")])
+        fixed = text.replace("    environment: production\n", "    environment: production\n    concurrency: {group: deploy-production, cancel-in-progress: false}\n")
+        self.assertEqual(rules(fixed), [])
+
     def test_cache_saves_ignored_without_pull_request_trigger(self):
         text = "on:\n  push:\n    branches: [main]\nconcurrency: {group: x, cancel-in-progress: false}\njobs:\n  a:\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    steps:\n      - uses: actions/cache@v5\n"
         self.assertEqual(rules(text), [])

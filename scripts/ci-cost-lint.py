@@ -39,7 +39,12 @@ from pathlib import Path
 
 MARKER = "cost-lint: native-surface"
 NATIVE = re.compile(r"^\s*(macos|windows)\b", re.IGNORECASE)
-MAIN_ONLY = re.compile(r"refs/heads/main|github\.ref_name\s*==\s*'main'|event_name\s*(==\s*'(push|schedule|workflow_dispatch)'|!=\s*'pull_request')")
+# Positive comparisons only: `github.ref != 'refs/heads/main'` saves on pull requests.
+MAIN_ONLY = re.compile(
+    r"github\.ref\s*==\s*['\"]refs/heads/main['\"]"
+    r"|github\.ref_name\s*==\s*['\"]main['\"]"
+    r"|event_name\s*(==\s*'(push|schedule|workflow_dispatch)'|!=\s*'pull_request')"
+)
 
 
 @dataclass
@@ -129,6 +134,12 @@ def cancel_is_true(concurrency: object) -> bool:
     return value is True or (isinstance(value, str) and value.strip().lower() == "true")
 
 
+def concurrency_group(concurrency: object) -> str:
+    if isinstance(concurrency, dict):
+        return str(concurrency.get("group", ""))
+    return str(concurrency or "")
+
+
 def lint_workflow(name: str, text: str) -> list[Finding]:
     try:
         workflow = load_yaml(text)
@@ -154,6 +165,12 @@ def lint_workflow(name: str, text: str) -> list[Finding]:
         for job_id, job in jobs.items():
             if isinstance(job, dict) and cancel_is_true(job.get("concurrency")):
                 findings.append(Finding(name, job_id, "push-cancel", "job concurrency cancels in progress unconditionally in a push-triggered workflow"))
+
+    for job_id, job in jobs.items():
+        if isinstance(job, dict) and job.get("environment") is not None:
+            group = concurrency_group(job.get("concurrency") if job.get("concurrency") is not None else workflow_concurrency)
+            if "github.sha" in group:
+                findings.append(Finding(name, job_id, "deploy-sha-group", "deploy job's concurrency group includes github.sha, so two merges deploy in parallel and the older can land last; group deploys by ref or environment"))
 
     on_pr = bool(on & {"pull_request", "pull_request_target"})
     for job_id, job in jobs.items():
