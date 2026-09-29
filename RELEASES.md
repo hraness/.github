@@ -41,6 +41,10 @@ The summary and changes come from `CHANGELOG.md` in the tagged commit. The secti
 
 Release workflows that verify their own release, for retries or for downstream admission, read the identity record from the end of the body. Parse from the last `<!-- ` marker that opens the repository's identity comment, and require the body to end with `-->`. Check that the notes above it are byte-identical to the rendered changelog section plus the generated install and verify sections, so a hand edit to a published page is detected like any other change.
 
+## Launch-day assets
+
+A release page does not replace the launch post. The “Introducing {product}” post, its social posts, product mockups, and launch film live on the product's site and follow the launch beats and social posts addendum in [`GENERATION_STYLE.md`](GENERATION_STYLE.md) and the launch posts section of [`MESSAGING.md`](MESSAGING.md). They render status and version from the same release record as this page.
+
 ## Do not put on a release page
 
 - “What’s Changed” lists, “Full Changelog” compare links, contributor lists, or “Generated with” lines. The compare link and the commit are in the Verify section when they help.

@@ -174,6 +174,14 @@ Readers trust a page that states its limits plainly. They skim a page that repea
 - Use a caption to connect the image to the text. Do not explain what the image is not, and do not end on an epigram.
 - Credit tools and models by their current names.
 
+## Write social text
+
+- Posts on X, Bluesky, Threads, Mastodon, and LinkedIn follow every rule here, including no em dashes and no exclamation marks.
+- Use no emoji, hashtags, or thread numbering unless a repository addition allows them for one channel.
+- Keep image alt text to 125 characters or fewer.
+- Link the canonical URL without tracking parameters.
+- Launch posts follow the launch beats and social posts addendum in [`GENERATION_STYLE.md`](GENERATION_STYLE.md), and channel limits are in [`MESSAGING.md`](MESSAGING.md).
+
 ## Write focused documentation
 
 - Decide whether a page is a tutorial, how-to guide, explanation, or reference.
