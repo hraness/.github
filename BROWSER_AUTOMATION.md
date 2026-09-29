@@ -1,6 +1,6 @@
 # Browser automation
 
-Use a versioned Chrome for Testing installation or the Chromium revision
+For ordinary owned automation, use a versioned Chrome for Testing installation or the Chromium revision
 provisioned for the repository's pinned Playwright version when tests or
 verification scripts own the browser. Keep browser selection in the launcher
 so shells, CI, and existing sessions all receive the same protection.
@@ -36,6 +36,35 @@ Repositories that copy this template must adopt subsequent fixes explicitly.
 An explicitly authorized attachment to a person's existing browser is a
 separate operation. Preserve that browser's profile and lifetime; closing an
 owned automation session must not terminate a browser owned by the user.
+
+## Slopcamera native-runtime exception
+
+Slopcamera's native runtime may use a signature-verified, version-bound,
+immutable task-owned Chrome snapshot when its vendor identity requirement
+excludes the provisioned testing browser. This exception applies only to that
+native runtime. Ordinary automation and the public-site template continue to
+require provisioned Chrome for Testing or Playwright browsers.
+
+The native launcher must verify the expected vendor signature and exact browser
+version, create and verify its immutable snapshot, and launch only that snapshot.
+It must never launch the installed application directly or accept an arbitrary
+executable override. Preserve all existing identity, snapshot integrity, browser
+ownership, scheduling, and cleanup checks; a testing browser that fails identity
+verification is not a reason to weaken them.
+
+The current launch contract must include `MacAppCodeSignClone` in its merged
+`--disable-features` value and bind that argument to the runtime's integrity
+verification. Version the contract when changing it. Preserve the interpretation
+of historical receipts without allowing an older contract to authorize a new
+launch. Keep audio muting, other required feature flags, and graceful shutdown.
+
+Before activating this exception, require native regression tests for the
+contract and signature checks plus a live launch/shutdown test showing no new
+code-signature clones and completed cleanup. This is a qualification requirement,
+not a claim that any particular runtime version has passed. Candidates without
+passing regression and live qualification evidence must not activate. At runtime,
+identity or launch-contract verification failures must stop the launch; never
+select installed Chrome as a fallback.
 
 ## Keep the rule enforced
 

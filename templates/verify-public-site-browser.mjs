@@ -109,6 +109,8 @@ async function selfTest() {
   assert.ok(options.args.includes("--disable-features=PaintHolding,MacAppCodeSignClone"));
   await assert.rejects(provisionedBrowserOptions(chromium, async () => "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"), /not installed Google Chrome/u);
   await assert.rejects(provisionedBrowserOptions(chromium, async () => { throw new Error("ENOENT"); }), /Provision the pinned Playwright browser/u);
+  // Slopcamera's native exception cannot authorize snapshots in this ordinary launcher.
+  await assert.rejects(provisionedBrowserOptions(chromium, async () => "/task/native-runtime/Google Chrome.app/Contents/MacOS/Google Chrome"), /not installed Google Chrome/u);
 
   assert.equal(defaultConcurrency(2), 2);
   assert.equal(defaultConcurrency(4), 3);
