@@ -73,6 +73,65 @@ successful provisioned selection in launcher tests. Run them through the
 repository's existing required checks. A merge queue does not select browsers
 and does not need an additional approval stage for this policy.
 
+## Register the rule with agents
+
+The organization `.github` repository's instructions are not automatically
+inherited by other repositories. Register the rule in the global instruction
+files that the agents load at session start to cover every repository on a
+development machine, including future checkouts and directories without a
+local agent guide.
+
+| Agent | Global instruction file | Repository instruction file |
+| --- | --- | --- |
+| Codex | `~/.codex/AGENTS.md`; a nonempty `AGENTS.override.md` takes precedence | Root `AGENTS.md`, then instructions along the working-directory path |
+| Claude Code | `~/.claude/CLAUDE.md` | Root `CLAUDE.md`; `@AGENTS.md` imports shared repository rules |
+| Devin for Terminal | `~/.config/devin/AGENTS.md` | Root `AGENTS.md`; Devin also recognizes Claude instruction files |
+
+From a reviewed checkout of this repository, preview the changes, install,
+and verify:
+
+```sh
+python3 scripts/register-browser-policy.py --dry-run
+python3 scripts/register-browser-policy.py --write --backup-dir /path/to/private-backup-directory
+python3 scripts/register-browser-policy.py --check
+```
+
+The installer copies only the marked `browser-automation` rule from
+[AGENTS.md](AGENTS.md), preserving all other instructions. It respects
+`CODEX_HOME`, `CLAUDE_CONFIG_DIR`, and `XDG_CONFIG_HOME`; it also updates an
+existing nonempty Codex global override so that override cannot hide the rule.
+It backs up changed files before replacing them, rejects malformed managed
+blocks and instruction-file symlinks, and makes no changes to agent permission settings,
+authentication, provider settings, shell defaults, or running sessions.
+Existing file modes are preserved; new instruction files and backups are private.
+Empty environment overrides use the default paths; nonempty overrides must be
+absolute. Directory aliases are resolved and overlapping targets are rejected.
+Updates are atomic per file, not across all agents. If a later write fails, the
+error report identifies completed updates and saved backups; inspect it before retrying.
+Rerun `--check` after a policy update; a mismatch exits unsuccessfully.
+
+Start a fresh agent session after installation. With Devin for Terminal,
+`devin rules show AGENTS` identifies the exact loaded global file and its
+always-on activation. For Claude Code, `/context` lists loaded memory files.
+For Codex, ask a fresh session to report its loaded instructions. Check from
+a repository with no local guide as well as an existing project. Do not put
+the rule in the verification prompt: confirm the agent received it at startup.
+
+Global files cover agents running under that home directory and configuration.
+Hosted agents and another machine need the same registration in their own
+environment, or the canonical delivery block in their repository's root
+`AGENTS.md` and a `CLAUDE.md` containing `@AGENTS.md`. A local installation
+does not change a hosted agent's organization knowledge or settings.
+
+For new repositories, keep these root instruction files in the initial
+commit and copy the delivery block as described below. Global registration
+provides local coverage while repository instructions make the rule portable
+to other machines. Use the existing drift checker to keep those copies current.
+
+The loading paths follow the official [Codex instruction guide](https://learn.chatgpt.com/docs/agent-configuration/agents-md),
+[Claude Code memory guide](https://code.claude.com/docs/en/memory), and Devin
+for Terminal's installed `rules` help and always-on rule inspector.
+
 The canonical rule lives in the `hraness-delivery` block in [AGENTS.md](AGENTS.md).
 Copy the complete block into affected repositories, preserving their additions,
 and run `python3 scripts/sync-agent-blocks.py --check --path /path/to/repository`

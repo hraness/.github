@@ -5,6 +5,11 @@ change. Follow its setup, contribution rules, and required checks. A
 repository's own contribution guide takes precedence over this organization
 default.
 
+When setting up Claude Code, Codex, or Devin for Terminal on a development
+machine, [register the shared browser rule](BROWSER_AUTOMATION.md#register-the-rule-with-agents)
+in their global instructions. Keep root `AGENTS.md` and a `CLAUDE.md` import
+in new repositories so their rules also travel with the source.
+
 For documentation changes, use the [Hraness documentation guidelines](https://github.com/hraness/.github/blob/main/DOCUMENTATION_GUIDELINES.md).
 Choose whether the reader needs guided learning, help with a task, exact
 reference, or explanation. Keep capabilities, examples, prerequisites, and
