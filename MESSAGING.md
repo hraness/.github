@@ -111,8 +111,26 @@ Import these fields from the published record instead of typing them. When a rep
 
 - The X and LinkedIn limits come from secondary sources. Check the field's own counter when you submit.
 - A person writes the Show HN title and text and the Product Hunt first comment. Agents supply checked facts for them, not prose.
+- Launch-day social posts come from the launch post's beats, not from these fields. See [Launch posts](#launch-posts).
 - Submit the canonical URL without tracking parameters.
 - Record the exact text submitted to each field and the record field it came from, so a later audit can find listings that no longer match.
+
+## Launch posts
+
+Launch-day social posts are cut from the beats of the product's “Introducing {product}” post, as the launch beats and social posts addendum in [`GENERATION_STYLE.md`](GENERATION_STYLE.md) describes. Each beat carries a standalone post, one visual, and alt text, so every channel below takes the same claims in the same order. The organization account posts them.
+
+| Channel | Take | Limit per post |
+| --- | --- | --- |
+| X thread | one post per beat | 280 weighted characters; a link counts as 23 |
+| Bluesky | one post per beat | 300 characters |
+| Threads, Mastodon | one post per beat | 500 characters |
+| LinkedIn post | the first beat as the opening, then the others as short paragraphs | 3,000 characters; the first 210 show before “see more” |
+| 9:16 video captions | one beat per card | 2 lines of 42 characters |
+| Image alt text, every channel | the beat's alt text | 125 characters |
+
+- The social kit also emits a fact sheet for the Show HN post and the Product Hunt first comment: names, status, numbers, and links, with their sources. A person writes those posts from it.
+- The last post in every channel links the canonical URL of the launch post, without tracking parameters.
+- Check each limit against the platform's own counter when you post. Record the exact text posted to each channel and the beat it came from.
 
 ## Page anatomy
 

@@ -6,7 +6,7 @@
 - `STYLE.md` defines the public and reader-facing prose contract; `WRITING.md` defines internal prose. Repositories keep synced copies of both.
 - `CLI_MENU_STYLE.md` defines how every Hraness command-line tool and menu bar menu reads and behaves: the no-argument screen, help, version, errors, symbols, color, pipes, the menu layout and symbol names, permission notice copy, and the build-governance workflows that check them.
 - `RELEASES.md` defines the GitHub Release page every product ships: title, summary, changes, install, verify, and the trailing identity record, with notes taken from `CHANGELOG.md`.
-- `MESSAGING.md` defines the Hraness voice, product names, the messaging record each product carries in the portfolio registry (category, tagline, short, meta, medium, long), and which surface uses each field.
+- `MESSAGING.md` defines the Hraness voice, product names, the messaging record each product carries in the portfolio registry (category, tagline, short, meta, medium, long), which surface uses each field, and the limits for launch-day social posts.
 - `GENERATION_STYLE.md` holds the versioned instruction block for models that write published text.
 - `CONTRIBUTING.md` provides default contributor guidance for repositories without their own.
 - `SUPPORT_INVITATIONS.md` describes shared optional signup and support adoption across product surfaces.
@@ -20,7 +20,7 @@
 - Treat `DOCUMENTATION_GUIDELINES.md` as the canonical cross-repository documentation framework. Adopt it explicitly in each affected repository's root guide and contribution path; this repository's `AGENTS.md` is not inherited across repositories.
 - Treat `README_GUIDELINES.md` as the canonical cross-repository README framework. Change it when recurring evidence warrants a shared rule, then adopt the change deliberately in affected repositories.
 - Follow `STYLE.md` for the organization profile and other public repository prose. `STYLE.md` and `WRITING.md` here are the canonical copies: change shared rules here first, then sync them into repositories with each repository's rules kept under “Repository additions”.
-- Distribute the `hraness-public-copy` and `hraness-ci` blocks below into repository `AGENTS.md` files the same way as the `hraness-delivery` block (`hraness-ci` goes into every repository that has a `.github/workflows` directory). Distribute the `hraness-releases` block the same way into every repository that publishes GitHub Releases. Distribute the `hraness-articles` block the same way into repositories whose sites publish essays or blog posts. This file is the source of every block: change the text here first, then copy it verbatim between the markers.
+- Distribute the `hraness-public-copy` and `hraness-ci` blocks below into repository `AGENTS.md` files the same way as the `hraness-delivery` block (`hraness-ci` goes into every repository that has a `.github/workflows` directory). Distribute the `hraness-releases` block the same way into every repository that publishes GitHub Releases. Distribute the `hraness-articles` block the same way into repositories whose sites publish essays or blog posts. Distribute the `hraness-launch` block the same way into those repositories and into every product repository whose site has a home page, in the same pull request that adds the product's launch post. This file is the source of every block: change the text here first, then copy it verbatim between the markers.
 - Follow `SUPPORT_INVITATIONS.md` when documenting or adopting optional updates and support. Product adapters use the shared protocol and preserve their medium's task boundaries.
 - Keep the organization profile short. Link to shared guidance instead of copying it into `profile/README.md`.
 
@@ -44,6 +44,13 @@
 - A new post starts out of search indexes, sitemaps, and feeds. It becomes indexable only when its review record is complete, scores at least 9 of 12 with no zero score, and the page shows the provenance note.
 - When a product is renamed or a relation changes, update the post bodies that mention it in the same change.
 <!-- hraness-articles:end -->
+
+<!-- hraness-launch:start -->
+- Launch posts, their social posts, product mockups, and launch films follow the launch beats and social posts addendum in `GENERATION_STYLE.md` and “Introducing a product (beats)” in `ARTICLE_COPY.md` in `@hraness/design-kit`. Channel limits are in the launch posts section of `MESSAGING.md`.
+- Build them with the `product-launch` agent skill, the `./mockups` and `./launch` exports of `@hraness/design-kit`, and `slopcamera html init --template launch-film`.
+- Take every number in a beat, social post, film caption, or store listing from the product's launch facts module, and the status from the release record. Label mockups as illustrations.
+- The social kit emits posts for X, Bluesky, Threads, Mastodon, and LinkedIn, and a fact sheet for the Show HN post and the Product Hunt first comment. A person writes those two.
+<!-- hraness-launch:end -->
 
 <!-- hraness-delivery:start -->
 - Treat the user's request to change this repository as standing authorization for routine task-owned commits, pushes, pull requests, merges, releases, deployments, and production verification after the gates applicable to that action pass. Do not ask for duplicate confirmation. Build confidence through relevant automated checks, bounded diagnostics, and independent review, not another human approval. Passing checks does not expand task scope or authority.
