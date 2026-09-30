@@ -1,0 +1,31 @@
+name: Wait for npm package visibility
+description: Wait for an exact public npm version, integrity, distribution tag, and provenance subject.
+inputs:
+  package:
+    description: Public npm package name.
+    required: true
+  version:
+    description: Exact published version.
+    required: true
+  integrity:
+    description: Canonical sha512 SRI from the retained package archive.
+    required: true
+  tag:
+    description: Distribution tag that must point to the version.
+    default: latest
+  timeout-seconds:
+    description: Total wait, including HTTP requests; 1 through 1200 seconds.
+    default: '1200'
+  poll-interval-seconds:
+    description: Delay between attempts; 1 through 60 seconds.
+    default: '5'
+outputs:
+  version:
+    description: Version observed in the registry.
+  integrity:
+    description: Archive integrity matched against the input.
+  attestation-url:
+    description: Public registry URL with a matching provenance subject.
+runs:
+  using: node24
+  main: index.mjs

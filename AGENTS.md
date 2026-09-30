@@ -21,6 +21,7 @@
 - `scripts/sync-agent-blocks.py --check` reports repositories whose copies of the blocks below differ from this file; `.github/workflows/agent-block-drift.yml` runs it weekly over public repositories, and private ones are checked from a signed-in machine with `--org hraness --visibility private`. It never writes to other repositories.
 - `scripts/ci-cost-lint.py` checks a repository's workflows against the cost rules in the `hraness-ci` block; `.github/workflows/ci-cost-lint.yml` is the reusable workflow that runs it.
 - `scripts/actions-cost-report.py` summarizes the organization's GitHub billing usage per repository and SKU, the daily net trend, and budget headroom.
+- `actions/npm-visible/` checks public npm version, archive, tag, and provenance visibility within one deadline; its reference documents inputs, outputs, and failure behavior.
 - `BROWSER_AUTOMATION.md` describes browser provisioning, selection, cleanup, and regression evidence.
 - `scripts/register-browser-policy.py` checks or installs the browser rule in global agent files or selected repository roots, preserving other instructions. Global files cover local sessions; repository files and the Devin personal-cloud plugin make the rule portable.
 - `plugins/browser-automation/` is a rule-only Devin plugin for account-wide cloud, CLI, and Desktop registration; it carries the same canonical browser rule and no tools, hooks, MCP servers, or dependencies.

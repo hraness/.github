@@ -44,6 +44,8 @@ jobs:
           persist-credentials: false
       - name: Python unit tests
         run: python3 -m unittest discover -s tests -v
+      - name: npm visibility action tests
+        run: node --test actions/npm-visible/index.test.mjs
       - name: Browser template self-test
         run: node templates/verify-public-site-browser.mjs --self-test
       - name: Cost lint of this repository
