@@ -85,6 +85,8 @@ This addendum covers the beats of an “Introducing {product}” post and the so
 
 **One claim per post.** Each beat is also a post, and each post stands alone: a reader who sees only that post learns one true thing about the product. Do not continue a sentence across posts or refer to “above” or “the next post”.
 
+**Claims only.** Social posts, the Show HN and Product Hunt fact sheet, and the Product Hunt fields carry no caveats, limits, candid negative findings, audit or review lines, or disclaimers. The `limits` beat and any caveat stay in the launch post, the docs, and the site, including legally required disclaimers such as “not investment advice”. Every post must still be true on its own: when a caveat is what keeps a claim accurate, write a narrower claim that is accurate without it, or leave that beat out of the social posts.
+
 **First post.** The first post says what the product does, in the words of its messaging record. Do not open with a question, a teaser, “here's why”, a cliffhanger, or a promise of what the thread will reveal.
 
 **Facts.** Take every number, version, size, rate, and status from the product's launch facts module, which the post, its social posts, the film captions, and the store listing all import. Do not type a number into a post.

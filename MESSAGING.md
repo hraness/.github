@@ -117,18 +117,18 @@ Import these fields from the published record instead of typing them. When a rep
 
 ## Launch posts
 
-Launch-day social posts are cut from the beats of the product's “Introducing {product}” post, as the launch beats and social posts addendum in [`GENERATION_STYLE.md`](GENERATION_STYLE.md) describes. Each beat carries a standalone post, one visual, and alt text, so every channel below takes the same claims in the same order. The organization account posts them.
+Launch-day social posts are cut from the beats of the product's “Introducing {product}” post, as the launch beats and social posts addendum in [`GENERATION_STYLE.md`](GENERATION_STYLE.md) describes. Each beat carries a standalone post, one visual, and alt text, so every channel below takes the same claims in the same order. The `limits` beat and any caveat, negative finding, audit or review line, or disclaimer stay in the launch post, the docs, and the site; social posts and the fact sheet carry claims only, each accurate on its own. The organization account posts them.
 
 | Channel | Take | Limit per post |
 | --- | --- | --- |
-| X thread | one post per beat | 280 weighted characters; a link counts as 23 |
-| Bluesky | one post per beat | 300 characters |
-| Threads | one post per beat | 500 characters |
-| LinkedIn post | the first beat as the opening, then the others as short paragraphs | 3,000 characters; the first 210 show before “see more” |
+| X thread | one post per social beat | 280 weighted characters; a link counts as 23 |
+| Bluesky | one post per social beat | 300 characters |
+| Threads | one post per social beat | 500 characters |
+| LinkedIn post | the first social beat as the opening, then the others as short paragraphs | 3,000 characters; the first 210 show before “see more” |
 | 9:16 video captions | one beat per card | 2 lines of 42 characters |
 | Image alt text, every channel | the beat's alt text | 125 characters |
 
-- The social kit also emits a fact sheet for the Show HN post and the Product Hunt first comment: names, status, numbers, and links, with their sources. A person writes those posts from it.
+- The social kit also emits a fact sheet for the Show HN post and the Product Hunt first comment: names, status, numbers, and links, with their sources, and no caveats or limits. A person writes those posts from it.
 - The last post in every channel links the canonical URL of the launch post, without tracking parameters.
 - Check each limit against the platform's own counter when you post. Record the exact text posted to each channel and the beat it came from.
 
