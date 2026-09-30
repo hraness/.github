@@ -118,24 +118,97 @@ a repository with no local guide as well as an existing project. Do not put
 the rule in the verification prompt: confirm the agent received it at startup.
 
 Global files cover agents running under that home directory and configuration.
-Hosted agents and another machine need the same registration in their own
-environment, or the canonical delivery block in their repository's root
-`AGENTS.md` and a `CLAUDE.md` containing `@AGENTS.md`. A local installation
-does not change a hosted agent's organization knowledge or settings.
+A local global file does not configure another machine or a hosted service.
+Use portable repository registration for source-based coverage and the Devin
+personal-cloud plugin for account-wide Devin coverage.
 
-For new repositories, keep these root instruction files in the initial
-commit and copy the delivery block as described below. Global registration
-provides local coverage while repository instructions make the rule portable
-to other machines. Use the existing drift checker to keep those copies current.
+### Portable repository registration
 
-The loading paths follow the official [Codex instruction guide](https://learn.chatgpt.com/docs/agent-configuration/agents-md),
-[Claude Code memory guide](https://code.claude.com/docs/en/memory), and Devin
-for Terminal's installed `rules` help and always-on rule inspector.
+The independent `browser-automation` block at the start of [AGENTS.md](AGENTS.md)
+is the canonical rule. Keep it first in each repository's root `AGENTS.md`.
+Devin automatically includes at most the first 16 KiB from each always-on
+instruction file ([hosted onboarding](https://docs.devin.ai/onboard-devin/agents-md)),
+so an otherwise correct block at the end of a long guide
+may be incomplete. A nonempty root `AGENTS.override.md` must carry the rule too.
+Claude Code needs a root `CLAUDE.md` that imports `@AGENTS.md` or carries the
+same rule itself.
 
-The canonical rule lives in the `hraness-delivery` block in [AGENTS.md](AGENTS.md).
-Copy the complete block into affected repositories, preserving their additions,
-and run `python3 scripts/sync-agent-blocks.py --check --path /path/to/repository`
-from this repository to detect drift. The block links back to this canonical runbook.
+Preview, update, and check a selected repository from a reviewed checkout of
+this policy repository:
+
+```sh
+python3 scripts/register-browser-policy.py --repo /path/to/repository --dry-run
+python3 scripts/register-browser-policy.py --repo /path/to/repository --write --backup-dir /path/to/private-repository-backup
+python3 scripts/register-browser-policy.py --repo /path/to/repository --check
+python3 scripts/sync-agent-blocks.py --check --block browser-automation --path /path/to/repository
+```
+
+Repeat `--repo` to select several Git roots. Repository mode cannot be combined
+with `--home`; it never changes the global agent files. It inserts or moves only
+the managed browser block to the beginning and preserves other instructions.
+Existing Claude imports are retained; a missing `CLAUDE.md` receives a minimal
+`@AGENTS.md` import. Safe aliases between root instruction files are preserved;
+external, dangling, cyclic, non-regular, and hard-linked targets are rejected.
+All selected targets are checked before any write. Backups and per-file atomic
+updates use the same recovery reporting as global registration.
+
+Deliver the changed files through each repository's existing validation,
+review, and integration workflow. Do not replace its delivery policy or copy
+unrelated shared blocks just to register this rule. For new repositories, copy
+[the AGENTS template](templates/AGENTS.md) and
+[the Claude import](templates/CLAUDE.md) in the initial commit, then add the
+repository's own setup, validation, and delivery instructions.
+
+To report browser-rule drift on accessible active repositories, including
+owner-controlled forks and this policy repository:
+
+```sh
+python3 scripts/sync-agent-blocks.py --check --block browser-automation --org hraness --visibility all --include-forks --include-self
+```
+
+The checker reports missing, different, duplicate, malformed, or too-late
+blocks. It never writes to another repository. Organization discovery leaves
+archived repositories read-only. The existing weekly public drift report also
+checks this independent browser rule; private repositories require a signed-in
+machine with access. Use the repository installer to verify the actual Claude
+import and Codex override paths as well as the canonical `AGENTS.md` block.
+
+### Devin personal-cloud registration
+
+Devin supports personal plugins that sync to future cloud, CLI, and Desktop
+sessions across devices. The [browser policy plugin](plugins/browser-automation/AGENTS.md)
+contains the exact public canonical rule and a manifest with skill and MCP
+loading disabled. It has no hooks, executables, tools, dependencies, or
+permission changes.
+
+After reviewing the merged source, install it with the installed Devin CLI:
+
+```sh
+devin plugins install --yes 'hraness/.github#plugins/browser-automation'
+devin plugins list
+devin plugins info hraness-browser-automation
+devin rules list
+```
+
+The default install scope is personal cloud. Do not pass `--local` when cloud
+coverage is required. `--yes` accepts the plugin trust prompt for the reviewed
+source; this operation registers instructions and does not start a model or
+cloud session. Inspect the installed source, version, unblocked status, and
+rule count. Use `devin rules show` with the exact new rule name listed by the
+inspector to confirm always-on activation and the canonical content.
+
+The source tracks the repository's default branch. Check its current reviewed
+contents before installation; `devin plugins update` refreshes installed
+contents after a delivered policy update. Existing organization and enterprise
+plugin controls remain binding. Running sessions retain their startup context;
+start a fresh session after registration. Portable repository files also cover
+other authorized accounts that do not have this personal plugin.
+
+These loading paths follow the official
+[Codex instruction guide](https://learn.chatgpt.com/docs/agent-configuration/agents-md),
+[Claude Code memory guide](https://code.claude.com/docs/en/memory),
+[Devin rules reference](https://docs.devin.ai/cli/extensibility/rules), and
+[Devin cloud plugin guide](https://docs.devin.ai/product-guides/plugins#how-plugins-reach-sessions-cloud--local-sync).
 
 ## Why the executable matters
 

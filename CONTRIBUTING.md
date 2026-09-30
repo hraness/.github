@@ -8,7 +8,10 @@ default.
 When setting up Claude Code, Codex, or Devin for Terminal on a development
 machine, [register the shared browser rule](BROWSER_AUTOMATION.md#register-the-rule-with-agents)
 in their global instructions. Keep root `AGENTS.md` and a `CLAUDE.md` import
-in new repositories so their rules also travel with the source.
+in new repositories so their rules also travel with the source. Put the
+canonical browser block first in `AGENTS.md`; the
+[repository installer](BROWSER_AUTOMATION.md#portable-repository-registration)
+updates this rule without replacing other repository instructions.
 
 For documentation changes, use the [Hraness documentation guidelines](https://github.com/hraness/.github/blob/main/DOCUMENTATION_GUIDELINES.md).
 Choose whether the reader needs guided learning, help with a task, exact

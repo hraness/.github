@@ -1,5 +1,6 @@
 # Weekly report of public repositories whose AGENTS.md blocks differ from the
-# canonical hraness-* blocks in this repository. Report-only: it never writes
+# canonical shared blocks, including browser-automation, in this repository.
+# Report-only: it never writes
 # to another repository. The job token cannot read private repositories; check
 # those from a signed-in machine with
 #   scripts/sync-agent-blocks.py --check --org hraness --visibility private
@@ -29,4 +30,4 @@ jobs:
       - name: Check public repositories
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 scripts/sync-agent-blocks.py --check --org hraness --visibility public | tee -a "$GITHUB_STEP_SUMMARY"
+        run: python3 scripts/sync-agent-blocks.py --check --org hraness --visibility public --include-forks --include-self | tee -a "$GITHUB_STEP_SUMMARY"
