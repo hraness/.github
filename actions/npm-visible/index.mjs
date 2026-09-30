@@ -164,7 +164,7 @@ function matchingProvenance(document, { name, version, integrity }) {
 async function observe(options, dependencies) {
   const { name, version, integrity, tag } = options;
   // Use npm's request spelling so the same CDN cache key is observed.
-  const encodedName = name.replace('/', '%2f');
+  const encodedName = name.replaceAll('/', '%2f');
   const metadata = await requestJson(`${registry}/${encodedName}/${encodeURIComponent(version)}`, dependencies);
   if (!object(metadata) || metadata.name !== name || metadata.version !== version) {
     throw new Error('registry version response does not identify the requested package');

@@ -30,7 +30,7 @@ const archiveUrl = 'https://registry.npmjs.org/@example/tool/-/tool-1.2.3.tgz';
 function fixtures(input = options) {
   const statement = {
     _type: 'https://in-toto.io/Statement/v1', predicateType: slsa,
-    subject: [{ name: `pkg:npm/${input.name.replace('@', '%40')}@${input.version}`, digest: { sha512: Buffer.from(input.integrity.slice(7), 'base64').toString('hex') } }],
+    subject: [{ name: `pkg:npm/${input.name.replaceAll('@', '%40')}@${input.version}`, digest: { sha512: Buffer.from(input.integrity.slice(7), 'base64').toString('hex') } }],
   };
   return {
     metadata: { name: input.name, version: input.version, dist: { integrity: input.integrity, tarball: archiveUrl, attestations: { url, provenance: { predicateType: slsa } } } },
@@ -64,7 +64,7 @@ function harness(mutate = () => {}, respond) {
     log: message => messages.push(message),
     fetch: async (requestUrl, requestOptions) => {
       const key = requestOptions.method === 'HEAD' ? 'archive' : requestUrl.includes('/-/npm/v1/attestations/') ? 'attestations'
-        : requestUrl.endsWith('/dist-tags') ? 'tags' : requestUrl.endsWith(`/${options.name.replace('/', '%2f')}`) ? 'install' : 'metadata';
+        : requestUrl.endsWith('/dist-tags') ? 'tags' : requestUrl.endsWith(`/${options.name.replaceAll('/', '%2f')}`) ? 'install' : 'metadata';
       if (key === 'metadata') attempt += 1;
       calls.push({ url: requestUrl, options: requestOptions });
       return respond?.({ key, attempt, data, advance: ms => { clock += ms; } })
