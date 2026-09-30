@@ -91,7 +91,7 @@ This addendum covers the beats of an “Introducing {product}” post and the so
 
 **Facts.** Take every number, version, size, rate, and status from the product's launch facts module, which the post, its social posts, the film captions, and the store listing all import. Do not type a number into a post.
 
-**Visuals.** Each post carries at most one visual, taken from the beat it came from, with alt text. A mockup or diagram stays labelled as an illustration wherever it appears.
+**Visuals.** Each post carries at most one visual, taken from the beat it came from, with accurate alt text. Include a visible caption only when it adds useful context.
 
 **Last post.** The last post gives the status label and the canonical URL of the launch post, without tracking parameters. Add an install link only when the release record shows a public install.
 
