@@ -21,8 +21,9 @@ value as the action input. Pin the action to a reviewed commit of this repositor
 | `timeout-seconds` | No | `1200` | Total deadline, including requests; integer from 1 through 1200. |
 | `poll-interval-seconds` | No | `5` | Delay between attempts; integer from 1 through 60. |
 
-The action runs on the GitHub runner's Node 24 runtime and requires public
-HTTPS access to `registry.npmjs.org`. It uses no npm or GitHub credentials.
+The action runs on the GitHub runner's Node 24 runtime and requires
+[runner v2.327.1 or later](https://github.com/actions/runner/releases/tag/v2.327.1)
+and public HTTPS access to `registry.npmjs.org`. It uses no npm or GitHub credentials.
 
 ## Results and failures
 

@@ -64,7 +64,7 @@ function harness(mutate = () => {}, respond) {
     log: message => messages.push(message),
     fetch: async (requestUrl, requestOptions) => {
       const key = requestOptions.method === 'HEAD' ? 'archive' : requestUrl.includes('/-/npm/v1/attestations/') ? 'attestations'
-        : requestUrl.endsWith('/dist-tags') ? 'tags' : requestUrl.endsWith(`/${encodeURIComponent(options.name)}`) ? 'install' : 'metadata';
+        : requestUrl.endsWith('/dist-tags') ? 'tags' : requestUrl.endsWith(`/${options.name.replace('/', '%2f')}`) ? 'install' : 'metadata';
       if (key === 'metadata') attempt += 1;
       calls.push({ url: requestUrl, options: requestOptions });
       return respond?.({ key, attempt, data, advance: ms => { clock += ms; } })
@@ -78,6 +78,11 @@ test('matching scoped version, tag and provenance return exact evidence without 
   const h = harness();
   assert.deepEqual(await waitForNpm(options, h.dependencies), { version: '1.2.3', integrity, attestationUrl: url, attempts: 1 });
   assert.equal(h.calls.length, 5);
+  assert.deepEqual(h.calls.map(call => call.url), [
+    'https://registry.npmjs.org/@example%2ftool/1.2.3',
+    'https://registry.npmjs.org/@example%2ftool',
+    'https://registry.npmjs.org/-/package/@example%2ftool/dist-tags', url, archiveUrl,
+  ]);
   assert.equal(h.calls[1].options.headers.Accept, 'application/vnd.npm.install-v1+json');
   assert.equal(h.calls.at(-1).options.method, 'HEAD');
   assert.deepEqual(h.waits, []);
@@ -244,6 +249,14 @@ test('conflicting npm install integrity fails before an archive is used', async 
   await assert.rejects(waitForNpm(options, h.dependencies), /install metadata identifies different archive bytes/u);
   assert.deepEqual(h.waits, []);
   assert.equal(h.calls.some(call => call.options.method === 'HEAD'), false);
+});
+
+test('malformed install versions fail immediately instead of consuming the poll budget', async () => {
+  for (const value of [null, 0, 'pending', []]) {
+    const h = harness(data => { data.install.versions['1.2.3'] = value; });
+    await assert.rejects(waitForNpm(options, h.dependencies), /install version is malformed/u);
+    assert.deepEqual(h.waits, []);
+  }
 });
 
 for (const document of ['metadata', 'install']) {

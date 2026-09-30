@@ -79,6 +79,7 @@ async function boundedJson(response, accept, maximumBytes) {
 }
 
 async function request(url, { fetch, now, deadline }, { method = 'GET', accept = 'application/json' } = {}) {
+  const endpoint = `${method} ${new URL(url).pathname}`;
   const remaining = Math.ceil(deadline - now());
   if (remaining <= 0) throw new Pending('registry deadline reached');
   const signal = AbortSignal.timeout(Math.min(20_000, remaining));
@@ -89,7 +90,7 @@ async function request(url, { fetch, now, deadline }, { method = 'GET', accept =
       headers: { Accept: accept, 'Cache-Control': 'no-cache, no-store', Pragma: 'no-cache' },
     });
   } catch {
-    throw new Pending('registry request failed or timed out');
+    throw new Pending(`registry request failed or timed out: ${endpoint}`);
   }
   if (response.status !== 200) {
     const retry = response.headers.get('retry-after') ?? '';
@@ -97,7 +98,7 @@ async function request(url, { fetch, now, deadline }, { method = 'GET', accept =
       : Math.min(Math.max(0, Date.parse(retry) - Date.now()) || 0, 1_200_000);
     await response.body?.cancel();
     if ([404, 408, 425, 429].includes(response.status) || response.status >= 500) {
-      throw new Pending(`registry returned HTTP ${response.status}`, retryAfterMs);
+      throw new Pending(`registry returned HTTP ${response.status}: ${endpoint}`, retryAfterMs);
     }
     throw new Error(`registry returned unexpected HTTP ${response.status}; redirects and authentication are unsupported`);
   }
@@ -109,7 +110,8 @@ async function requestJson(url, dependencies, { accept = 'application/json', max
   try {
     return await boundedJson(response, accept, maximumBytes);
   } catch (error) {
-    if (signal.aborted) throw new Pending('registry body timed out');
+    if (signal.aborted) throw new Pending(`registry body timed out: ${new URL(url).pathname}`);
+    if (error instanceof Pending) throw new Pending(`${error.message}: ${new URL(url).pathname}`, error.retryAfterMs);
     throw error;
   }
 }
@@ -161,7 +163,8 @@ function matchingProvenance(document, { name, version, integrity }) {
 
 async function observe(options, dependencies) {
   const { name, version, integrity, tag } = options;
-  const encodedName = encodeURIComponent(name);
+  // Use npm's request spelling so the same CDN cache key is observed.
+  const encodedName = name.replace('/', '%2f');
   const metadata = await requestJson(`${registry}/${encodedName}/${encodeURIComponent(version)}`, dependencies);
   if (!object(metadata) || metadata.name !== name || metadata.version !== version) {
     throw new Error('registry version response does not identify the requested package');
@@ -178,10 +181,12 @@ async function observe(options, dependencies) {
     { accept: installAccept, maximumBytes: maximumInstallBodyBytes });
   if (!object(install) || install.name !== name) throw new Error('registry install metadata identifies a different package');
   const installVersion = install.versions?.[version];
-  if (!installVersion || !installVersion.dist?.integrity || !installVersion.dist.tarball) {
+  if (installVersion === undefined) throw new Pending('version is not yet visible in npm install metadata');
+  if (!object(installVersion)) throw new Error('registry install version is malformed');
+  if (!installVersion.dist?.integrity || !installVersion.dist.tarball) {
     throw new Pending('version is not yet visible in npm install metadata');
   }
-  if (!object(installVersion) || installVersion.version !== version
+  if (installVersion.version !== version
     || (installVersion.name !== undefined && installVersion.name !== name)) {
     throw new Error('registry install version identifies a different package');
   }
