@@ -28,4 +28,4 @@ outputs:
     description: Public registry URL with a matching provenance subject.
 runs:
   using: node24
-  main: index.mjs
+  main: main.mjs

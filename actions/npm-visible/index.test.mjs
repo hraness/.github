@@ -1,14 +1,31 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { runAction, validateOptions, waitForNpm } from './index.mjs';
+
+test('the actual action entrypoint cannot silently succeed under a symlink', async t => {
+  const directory = await mkdtemp(join(tmpdir(), 'npm-visible-entry-test-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const actionDirectory = fileURLToPath(new URL('.', import.meta.url));
+  const entry = /^  main: (.+)$/mu.exec(await readFile(join(actionDirectory, 'action.yml'), 'utf8'))[1];
+  await symlink(actionDirectory, join(directory, 'alias'), 'dir');
+  const result = spawnSync(process.execPath, [join(directory, 'alias', entry)], {
+    env: { INPUT_PACKAGE: '../invalid' }, encoding: 'utf8', timeout: 5_000,
+  });
+  assert.ifError(result.error);
+  assert.equal(result.status, 1, 'Invalid inputs must fail even when the runner uses a symlink');
+  assert.match(result.stderr, /npm-visible: package must/u);
+});
 
 const integrity = `sha512-${Buffer.alloc(64, 7).toString('base64')}`;
 const options = { name: '@example/tool', version: '1.2.3', integrity, timeoutMs: 3_000, pollMs: 1_000 };
 const slsa = 'https://slsa.dev/provenance/v1';
 const url = 'https://registry.npmjs.org/-/npm/v1/attestations/@example%2ftool@1.2.3';
+const archiveUrl = 'https://registry.npmjs.org/@example/tool/-/tool-1.2.3.tgz';
 
 function fixtures(input = options) {
   const statement = {
@@ -16,7 +33,10 @@ function fixtures(input = options) {
     subject: [{ name: `pkg:npm/${input.name.replace('@', '%40')}@${input.version}`, digest: { sha512: Buffer.from(input.integrity.slice(7), 'base64').toString('hex') } }],
   };
   return {
-    metadata: { name: input.name, version: input.version, dist: { integrity: input.integrity, attestations: { url, provenance: { predicateType: slsa } } } },
+    metadata: { name: input.name, version: input.version, dist: { integrity: input.integrity, tarball: archiveUrl, attestations: { url, provenance: { predicateType: slsa } } } },
+    install: { name: input.name, 'dist-tags': { latest: input.version }, versions: {
+      [input.version]: { version: input.version, dist: { integrity: input.integrity, tarball: archiveUrl } },
+    } },
     tags: { latest: input.version },
     // Structural fixture only. The consumer's signature verification is separate.
     attestations: { attestations: [{ predicateType: slsa, bundle: {
@@ -43,10 +63,12 @@ function harness(mutate = () => {}, respond) {
     sleep: async ms => { waits.push(ms); clock += ms; },
     log: message => messages.push(message),
     fetch: async (requestUrl, requestOptions) => {
-      const key = requestUrl.includes('/-/npm/v1/attestations/') ? 'attestations' : requestUrl.endsWith('/dist-tags') ? 'tags' : 'metadata';
+      const key = requestOptions.method === 'HEAD' ? 'archive' : requestUrl.includes('/-/npm/v1/attestations/') ? 'attestations'
+        : requestUrl.endsWith('/dist-tags') ? 'tags' : requestUrl.endsWith(`/${encodeURIComponent(options.name)}`) ? 'install' : 'metadata';
       if (key === 'metadata') attempt += 1;
       calls.push({ url: requestUrl, options: requestOptions });
-      return respond?.({ key, attempt, data, advance: ms => { clock += ms; } }) ?? json(data[key]);
+      return respond?.({ key, attempt, data, advance: ms => { clock += ms; } })
+        ?? (key === 'archive' ? new Response(null) : json(data[key]));
     },
   };
   return { dependencies, calls, waits, messages, data };
@@ -55,7 +77,9 @@ function harness(mutate = () => {}, respond) {
 test('matching scoped version, tag and provenance return exact evidence without waiting', async () => {
   const h = harness();
   assert.deepEqual(await waitForNpm(options, h.dependencies), { version: '1.2.3', integrity, attestationUrl: url, attempts: 1 });
-  assert.equal(h.calls.length, 3);
+  assert.equal(h.calls.length, 5);
+  assert.equal(h.calls[1].options.headers.Accept, 'application/vnd.npm.install-v1+json');
+  assert.equal(h.calls.at(-1).options.method, 'HEAD');
   assert.deepEqual(h.waits, []);
   for (const call of h.calls) {
     assert.equal(new URL(call.url).origin, 'https://registry.npmjs.org');
@@ -107,7 +131,7 @@ test('a network failure retries until the total deadline', async () => {
 test('HTTP time is part of the total deadline and cannot yield late success', async () => {
   const h = harness(() => {}, ({ key, advance }) => { if (key === 'attestations') advance(3_001); });
   await assert.rejects(waitForNpm(options, h.dependencies), /timed out/u);
-  assert.equal(h.calls.length, 3);
+  assert.equal(h.calls.length, 4);
   assert.deepEqual(h.waits, []);
 });
 
@@ -189,7 +213,7 @@ test('HTML, invalid JSON, and oversized bodies fail without poll loops', async (
 test('invalid request inputs cannot reach the network', async () => {
   for (const override of [
     { name: '../other' }, { name: '@scope/../../other' }, { name: 'https://other.example' }, { name: 'name\ncommand' },
-    { version: 'latest' }, { version: 'v1.2.3' }, { version: '01.2.3' }, { version: '1.2.3-01' },
+    { version: 'latest' }, { version: 'v1.2.3' }, { version: '01.2.3' }, { version: '1.2.3-01' }, { version: '1.2.3+build.2' },
     { integrity: 'sha512-AA==' }, { integrity: `${integrity} sha256-AA==` }, { tag: '../latest' },
     { timeoutMs: 1_200_001 }, { timeoutMs: Number.NaN }, { pollMs: 0 },
   ]) {
@@ -197,12 +221,91 @@ test('invalid request inputs cannot reach the network', async () => {
     await assert.rejects(waitForNpm({ ...options, ...override }, h.dependencies));
     assert.deepEqual(h.calls, []);
   }
-  assert.equal(validateOptions({ ...options, version: '1.2.3-rc.1+build.2' }).version, '1.2.3-rc.1+build.2');
+  assert.equal(validateOptions({ ...options, version: '1.2.3-rc.1' }).version, '1.2.3-rc.1');
 });
 
 test('custom tags are checked instead of latest', async () => {
-  const h = harness(data => { data.tags = { beta: '1.2.3', latest: '1.1.0' }; });
+  const h = harness(data => { data.tags = { beta: '1.2.3', latest: '1.1.0' }; data.install['dist-tags'] = data.tags; });
   assert.equal((await waitForNpm({ ...options, tag: 'beta' }, h.dependencies)).attempts, 1);
+});
+
+for (const field of ['versions', 'dist-tags']) {
+  test(`stale npm install ${field} prevents early success`, async () => {
+    const h = harness(() => {}, ({ key, attempt, data }) => {
+      if (key === 'install' && attempt === 1) return json({ ...data.install, [field]: {} });
+    });
+    assert.equal((await waitForNpm(options, h.dependencies)).attempts, 2);
+    assert.deepEqual(h.waits, [1_000]);
+  });
+}
+
+test('conflicting npm install integrity fails before an archive is used', async () => {
+  const h = harness(data => { data.install.versions['1.2.3'].dist.integrity = `sha512-${Buffer.alloc(64, 9).toString('base64')}`; });
+  await assert.rejects(waitForNpm(options, h.dependencies), /install metadata identifies different archive bytes/u);
+  assert.deepEqual(h.waits, []);
+  assert.equal(h.calls.some(call => call.options.method === 'HEAD'), false);
+});
+
+for (const document of ['metadata', 'install']) {
+  test(`unsafe archive URLs in ${document} cannot be requested`, async () => {
+    const h = harness(data => {
+      const target = document === 'metadata' ? data.metadata : data.install.versions['1.2.3'];
+      target.dist.tarball = 'https://other.example/archive.tgz';
+    });
+    await assert.rejects(waitForNpm(options, h.dependencies), /tarball URL/u);
+    assert.equal(h.calls.some(call => new URL(call.url).origin !== 'https://registry.npmjs.org'), false);
+    assert.equal(h.calls.some(call => call.options.method === 'HEAD'), false);
+  });
+}
+
+for (const endpoint of ['tags', 'attestations', 'archive']) {
+  test(`missing ${endpoint} retries even when version metadata is ready`, async () => {
+    const h = harness(() => {}, ({ key, attempt }) => {
+      if (key === endpoint && attempt === 1) return new Response(null, { status: 404 });
+    });
+    assert.equal((await waitForNpm(options, h.dependencies)).attempts, 2);
+    assert.deepEqual(h.waits, [1_000]);
+  });
+}
+
+test('a connection reset during a body read retries within the deadline', async () => {
+  const h = harness(() => {}, ({ key, attempt }) => {
+    if (key === 'metadata' && attempt === 1) return new Response(new ReadableStream({
+      start(controller) { controller.error(new TypeError('terminated')); },
+    }), { headers: { 'content-type': 'application/json' } });
+  });
+  assert.equal((await waitForNpm(options, h.dependencies)).attempts, 2);
+  assert.deepEqual(h.waits, [1_000]);
+});
+
+test('an HTTP-date Retry-After remains capped by the total deadline', async () => {
+  const future = new Date(Date.now() + 600_000).toUTCString();
+  const h = harness(() => {}, () => json({}, 429, { 'retry-after': future }));
+  await assert.rejects(waitForNpm(options, h.dependencies), /timed out/u);
+  assert.deepEqual(h.waits, [3_000]);
+});
+
+test('install metadata uses its vendor media type and separate larger bound', async () => {
+  const h = harness(data => { data.install.padding = 'x'.repeat(1_048_577); }, ({ key, data }) => {
+    if (key === 'install') return json(data.install, 200, { 'content-type': 'application/vnd.npm.install-v1+json' });
+  });
+  assert.equal((await waitForNpm(options, h.dependencies)).attempts, 1);
+  const tooLarge = harness(() => {}, ({ key }) => {
+    if (key === 'install') return new Response(new Uint8Array(32 * 1_048_576 + 1), { headers: { 'content-type': 'application/json' } });
+  });
+  await assert.rejects(waitForNpm(options, tooLarge.dependencies), /exceeds 32 MiB/u);
+  assert.deepEqual(tooLarge.waits, []);
+});
+
+test('one valid provenance statement cannot hide a conflicting second one', async () => {
+  const h = harness(data => { data.attestations.attestations.push({ predicateType: slsa, bundle: {} }); });
+  await assert.rejects(waitForNpm(options, h.dependencies), /provenance envelope/u);
+  assert.deepEqual(h.waits, []);
+});
+
+test('an inherited tag name cannot match a version', async () => {
+  const h = harness();
+  await assert.rejects(waitForNpm({ ...options, tag: 'constructor' }, h.dependencies), /timed out/u);
 });
 
 test('action inputs produce outputs only after complete matching evidence', async t => {

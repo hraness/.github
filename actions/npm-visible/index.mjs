@@ -1,12 +1,12 @@
 import { appendFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
-import { fileURLToPath } from 'node:url';
 
 const registry = 'https://registry.npmjs.org';
 const slsa = 'https://slsa.dev/provenance/v1';
 const maximumBodyBytes = 1_048_576;
-const versionPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/u;
+const maximumInstallBodyBytes = 32 * maximumBodyBytes;
+const installAccept = 'application/vnd.npm.install-v1+json';
+const versionPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*))*)?$/u;
 
 class Pending extends Error {
   constructor(message, retryAfterMs = 0) {
@@ -31,7 +31,7 @@ export function validateOptions(options) {
     throw new Error('package must be a lowercase public npm package name');
   }
   if (typeof version !== 'string' || version.length > 128 || !versionPattern.test(version)) {
-    throw new Error('version must be an exact canonical semantic version');
+    throw new Error('version must be an exact canonical npm version without build metadata');
   }
   const digest = typeof integrity === 'string' && integrity.startsWith('sha512-') ? integrity.slice(7) : '';
   if (!canonicalBase64(digest) || Buffer.from(digest, 'base64').length !== 64) {
@@ -47,8 +47,9 @@ export function validateOptions(options) {
   return { name, version, integrity, tag, timeoutMs, pollMs };
 }
 
-async function boundedJson(response) {
-  if (!/^application\/json(?:\s*;|$)/iu.test(response.headers.get('content-type') ?? '')) {
+async function boundedJson(response, accept, maximumBytes) {
+  const contentType = (response.headers.get('content-type') ?? '').split(';')[0].trim().toLowerCase();
+  if (!['application/json', accept].includes(contentType)) {
     await response.body?.cancel();
     throw new Error('registry response is not JSON');
   }
@@ -58,12 +59,15 @@ async function boundedJson(response) {
   let size = 0;
   try {
     while (true) {
-      const { value, done } = await reader.read();
+      let chunk;
+      try { chunk = await reader.read(); }
+      catch { throw new Pending('registry body read failed'); }
+      const { value, done } = chunk;
       if (done) break;
       size += value.byteLength;
-      if (size > maximumBodyBytes) {
+      if (size > maximumBytes) {
         await reader.cancel();
-        throw new Error('registry response exceeds 1 MiB');
+        throw new Error(`registry response exceeds ${maximumBytes / maximumBodyBytes} MiB`);
       }
       chunks.push(value);
     }
@@ -74,15 +78,15 @@ async function boundedJson(response) {
   return JSON.parse(text);
 }
 
-async function requestJson(url, { fetch, now, deadline }) {
+async function request(url, { fetch, now, deadline }, { method = 'GET', accept = 'application/json' } = {}) {
   const remaining = Math.ceil(deadline - now());
   if (remaining <= 0) throw new Pending('registry deadline reached');
   const signal = AbortSignal.timeout(Math.min(20_000, remaining));
   let response;
   try {
     response = await fetch(url, {
-      cache: 'no-store', redirect: 'manual', credentials: 'omit', signal,
-      headers: { Accept: 'application/json', 'Cache-Control': 'no-cache, no-store', Pragma: 'no-cache' },
+      method, cache: 'no-store', redirect: 'manual', credentials: 'omit', signal,
+      headers: { Accept: accept, 'Cache-Control': 'no-cache, no-store', Pragma: 'no-cache' },
     });
   } catch {
     throw new Pending('registry request failed or timed out');
@@ -97,12 +101,28 @@ async function requestJson(url, { fetch, now, deadline }) {
     }
     throw new Error(`registry returned unexpected HTTP ${response.status}; redirects and authentication are unsupported`);
   }
+  return { response, signal };
+}
+
+async function requestJson(url, dependencies, { accept = 'application/json', maximumBytes = maximumBodyBytes } = {}) {
+  const { response, signal } = await request(url, dependencies, { accept });
   try {
-    return await boundedJson(response);
+    return await boundedJson(response, accept, maximumBytes);
   } catch (error) {
     if (signal.aborted) throw new Pending('registry body timed out');
     throw error;
   }
+}
+
+function tarballUrl(value, name, version) {
+  if (typeof value !== 'string' || value.length > 1_024) throw new Error('registry tarball URL is invalid');
+  const url = new URL(value);
+  const filename = `${name.split('/').at(-1)}-${version}.tgz`;
+  if (url.origin !== registry || url.username || url.password || url.search || url.hash
+    || decodeURIComponent(url.pathname) !== `/${name}/-/${filename}`) {
+    throw new Error('registry tarball URL does not identify the exact package at registry.npmjs.org');
+  }
+  return url.href;
 }
 
 function attestationUrl(value, name, version) {
@@ -152,10 +172,28 @@ async function observe(options, dependencies) {
   if (!descriptor?.url || !descriptor.provenance) throw new Pending('provenance metadata is not visible');
   if (descriptor.provenance.predicateType !== slsa) throw new Error('registry provenance predicate is unsupported');
   const url = attestationUrl(descriptor.url, name, version);
+  if (!metadata.dist.tarball) throw new Pending('archive URL is not visible');
+  const archiveUrl = tarballUrl(metadata.dist.tarball, name, version);
+  const install = await requestJson(`${registry}/${encodedName}`, dependencies,
+    { accept: installAccept, maximumBytes: maximumInstallBodyBytes });
+  if (!object(install) || install.name !== name) throw new Error('registry install metadata identifies a different package');
+  const installVersion = install.versions?.[version];
+  if (!installVersion || !installVersion.dist?.integrity || !installVersion.dist.tarball) {
+    throw new Pending('version is not yet visible in npm install metadata');
+  }
+  if (!object(installVersion) || installVersion.version !== version
+    || (installVersion.name !== undefined && installVersion.name !== name)) {
+    throw new Error('registry install version identifies a different package');
+  }
+  if (installVersion.dist.integrity !== integrity) throw new Error('npm install metadata identifies different archive bytes');
+  tarballUrl(installVersion.dist.tarball, name, version);
+  if (install['dist-tags']?.[tag] !== version) throw new Pending('npm install distribution tag is not yet visible');
   const tags = await requestJson(`${registry}/-/package/${encodedName}/dist-tags`, dependencies);
   if (!object(tags)) throw new Error('registry distribution tags are malformed');
   if (tags[tag] !== version) throw new Pending(`distribution tag ${tag} does not yet identify ${version}`);
   matchingProvenance(await requestJson(url, dependencies), options);
+  const archive = await request(archiveUrl, dependencies, { method: 'HEAD', accept: 'application/octet-stream' });
+  await archive.response.body?.cancel();
   if (dependencies.now() >= dependencies.deadline) throw new Pending('registry deadline reached');
   return { version, integrity, attestationUrl: url };
 }
@@ -203,11 +241,4 @@ export async function runAction(environment = process.env) {
   }
   console.log(`${environment.INPUT_PACKAGE}@${result.version} is visible with matching integrity, tag, and provenance subject (${result.attempts} attempts)`);
   return result;
-}
-
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  runAction().catch(error => {
-    console.error(`npm-visible: ${error.message}`);
-    process.exitCode = 1;
-  });
 }
