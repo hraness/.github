@@ -13,7 +13,7 @@ Every tool decides who is reading before it prints anything, in this order:
 3. `human` when stderr is a terminal.
 4. `quiet` otherwise.
 
-`--json` always produces JSON. Tools built on `hraness-cli-kit` also print JSON to an agent that did not pass `--json`; the verb registry prints JSON only with `--json`, so an agent should always pass it. `quiet` prints plain text: no color, progress, hints, or invitations, and it never waits for input. Use `detectAudience()` from `@hraness/desktop-foundation` or `audience::detect` from the `hraness-cli-kit` crate instead of writing the rule again.
+`--json` always produces JSON. Tools built on `hraness-cli-kit`, and the verb registry's `runCli` since desktop-foundation 1.1, also print JSON to an agent that did not pass `--json`. A registry on 1.0 prints JSON only with `--json`, so an agent should still pass it. `quiet` prints plain text: no color, progress, hints, or invitations, and it never waits for input. Use `detectAudience()` from `@hraness/desktop-foundation` or `audience::detect` from the `hraness-cli-kit` crate instead of writing the rule again.
 
 The audience chooses wording and format only. It never lets a command skip [the human gate](#c5-decisions-a-person-owns).
 
@@ -95,10 +95,10 @@ Example
 ```
 
 - Line 1 is `✗` and one sentence saying what happened, then `: why` when known. Line 2 is `→` and exactly one next command. Nothing else by default.
-- Never a stack trace, usage dump, error code, or JSON object in text mode. `--debug` or `HRANESS_DEBUG=1` adds the code and trace below.
+- Never a stack trace, usage dump, error code, or JSON object in text mode. `--debug` or `HRANESS_DEBUG=1` adds the code and trace below. The verb registry's `runCli` supports `--debug` since desktop-foundation 1.1.1; 1.1.0 accepts only `HRANESS_DEBUG=1`.
 - A usage error names the input and suggests the closest match, then exits 2: `✗ Unknown command "stauts". Did you mean "status"?` and `→ textbutler --help`. A missing argument points at that command's help: `→ textbutler chats add --help`. An unknown option is a usage error too, and the command does not run.
 - With `--json`, the error goes to stdout as the error envelope in [C4](#c4-the-json-envelope), with the same exit code.
-- Commands not yet on the verb registry may still print the older `hraness-cli-kit` shape, `{"ok":false,"error":{"code":"…","message":"…","next":"…"}}`, and `permissionErrorJson` still prints that shape. A command on the registry can report a macOS permission failure in the envelope instead. desktop-foundation 1.1 adds an optional `error.permission` object, `{"kind","settingsUrl"}`, which runCli prints only when the product passes it to `HranessError`. Build it with `errorPermission(kind, settingsUrl)` in TypeScript or `ErrorPermission::new(kind).with_settings_url(url)` in Rust. A 1.0 reader rejects an envelope that carries it.
+- Commands not yet on the verb registry may still print the older `hraness-cli-kit` shape, `{"ok":false,"error":{"code":"…","message":"…","next":"…"}}`, and `permissionErrorJson` still prints that shape. Since desktop-foundation 1.1, a command on the registry can report a macOS permission failure in the envelope instead: the product sets the optional `error.permission` object, `{"kind","settingsUrl"}`, on the `HranessError` it throws. runCli never adds it on its own. Build it with `errorPermission(kind, settingsUrl)` in TypeScript or `ErrorPermission::new(kind).with_settings_url(url)` in Rust (passed to `ErrorBody::with_permission`). Both keep only the known System Settings panes and drop a kind outside `^[a-z][a-z0-9-]*$`. A 1.0 reader rejects an envelope that carries it.
 
 ### D6. Symbols, color, and terminals
 
@@ -349,7 +349,8 @@ To make a check required once its findings are fixed, pass `mode: required` and 
 
 ## Known gaps in the kits
 
-desktop-foundation 1.1.0 meets D3 and D5 in the verb registry's `runCli`: one `✗` sentence and one `→` line, `Did you mean` for a near miss, sentence-case `Usage:`, `help <cmd>`, no "gate" in text, and the JSON envelope for an agent without `--json`. A script (no terminal, no agent) still gets the error envelope on stdout and `FAIL <code>: <message>` on stderr, as in 1.0. Products on 1.0 keep their own handling of unknown commands and options until they move to 1.1. Two gaps are still open:
+desktop-foundation 1.1.1 meets D3 and D5 in the verb registry's `runCli`: one `✗` sentence and one `→` line, `Did you mean` for a near miss, sentence-case `Usage:`, `help <cmd>`, no "gate" in text, the JSON envelope for an agent without `--json`, and `--debug`. A script (no terminal, no agent) still gets the error envelope on stdout and `FAIL <code>: <message>` on stderr, as in 1.0. Products on 1.0 keep their own handling of unknown commands and options until they move to 1.1. One gap is still open:
 
 - Registry help has no `help advanced` form.
-- `runCli` has no `--debug` flag, and rejects it as an unknown option. Only `HRANESS_DEBUG=1` adds the code and trace below an error.
+
+desktop-foundation 1.1.0 also lacks `--debug`: it rejects the flag as an unknown option, and only `HRANESS_DEBUG=1` adds the code and detail. 1.1.1 closes that gap.
