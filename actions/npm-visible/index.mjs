@@ -5,7 +5,7 @@ const registry = 'https://registry.npmjs.org';
 const slsa = 'https://slsa.dev/provenance/v1';
 const maximumBodyBytes = 1_048_576;
 const maximumInstallBodyBytes = 32 * maximumBodyBytes;
-const installAccept = 'application/vnd.npm.install-v1+json';
+const installAccept = 'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*';
 const versionPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*))*)?$/u;
 
 class Pending extends Error {
@@ -49,7 +49,7 @@ export function validateOptions(options) {
 
 async function boundedJson(response, accept, maximumBytes) {
   const contentType = (response.headers.get('content-type') ?? '').split(';')[0].trim().toLowerCase();
-  if (!['application/json', accept].includes(contentType)) {
+  if (!['application/json', accept.split(';')[0]].includes(contentType)) {
     await response.body?.cancel();
     throw new Error('registry response is not JSON');
   }
@@ -100,7 +100,7 @@ async function request(url, { fetch, now, deadline }, { method = 'GET', accept =
     if ([404, 408, 425, 429].includes(response.status) || response.status >= 500) {
       throw new Pending(`registry returned HTTP ${response.status}: ${endpoint}`, retryAfterMs);
     }
-    throw new Error(`registry returned unexpected HTTP ${response.status}; redirects and authentication are unsupported`);
+    throw new Error(`registry returned unexpected HTTP ${response.status}: ${endpoint}`);
   }
   return { response, signal };
 }
@@ -163,7 +163,7 @@ function matchingProvenance(document, { name, version, integrity }) {
 
 async function observe(options, dependencies) {
   const { name, version, integrity, tag } = options;
-  // Use npm's request spelling so the same CDN cache key is observed.
+  // Use npm's request path spelling.
   const encodedName = name.replaceAll('/', '%2f');
   const metadata = await requestJson(`${registry}/${encodedName}/${encodeURIComponent(version)}`, dependencies);
   if (!object(metadata) || metadata.name !== name || metadata.version !== version) {

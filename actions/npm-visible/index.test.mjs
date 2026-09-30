@@ -83,7 +83,7 @@ test('matching scoped version, tag and provenance return exact evidence without 
     'https://registry.npmjs.org/@example%2ftool',
     'https://registry.npmjs.org/-/package/@example%2ftool/dist-tags', url, archiveUrl,
   ]);
-  assert.equal(h.calls[1].options.headers.Accept, 'application/vnd.npm.install-v1+json');
+  assert.equal(h.calls[1].options.headers.Accept, 'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*');
   assert.equal(h.calls.at(-1).options.method, 'HEAD');
   assert.deepEqual(h.waits, []);
   for (const call of h.calls) {

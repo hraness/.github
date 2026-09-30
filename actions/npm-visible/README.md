@@ -41,7 +41,8 @@ A different archive integrity, unexpected package identity, wrong provenance
 subject, malformed response, redirect, or authentication failure stops the
 action immediately. A failure produces no new outputs.
 
-Requests bypass caches and have a maximum duration of 20 seconds. JSON bodies
+Requests disable local caching and ask registry caches to revalidate. Each
+request has a maximum duration of 20 seconds. JSON bodies
 are limited to 1 MiB, except the install metadata, which is limited to 32 MiB.
 Archive and attestation URLs must identify the exact package version at the
 canonical registry. The action checks existing public
