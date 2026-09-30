@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-"""Report repositories whose AGENTS.md blocks differ from the canonical hraness-* blocks.
+"""Report repositories whose AGENTS.md blocks differ from the canonical shared blocks.
 
 usage: scripts/sync-agent-blocks.py --check [--org ORG] [--visibility public|private|all]
                                     [--repo OWNER/NAME ...] [--path DIR ...]
                                     [--canonical AGENTS.md] [--json]
+                                    [--block NAME ...] [--include-forks] [--include-self]
 
 The canonical text is every `<!-- hraness-<name>:start -->` ... `:end -->` block
-in this repository's AGENTS.md. Each target repository's AGENTS.md is compared
+in this repository's AGENTS.md, plus the independent browser-automation block.
+Each target repository's AGENTS.md is compared
 block by block, following the applicability rules in that file:
 
   hraness-delivery, hraness-public-copy   every repository
+  browser-automation  every repository, entirely within the first 16 KiB
   hraness-ci        every repository with files in .github/workflows
   hraness-releases  every repository that has published a GitHub Release
   hraness-launch    every repository that carries hraness-articles
@@ -21,7 +24,9 @@ compared after trimming trailing whitespace and surrounding blank lines.
 
 Targets: --path reads local checkouts (releases are then checked only when the
 block is present); --repo and --org read default branches through `gh api`.
-Archived repositories, forks and this repository are skipped. --check is
+Archived repositories are skipped by organization discovery; forks and this
+repository are skipped unless explicitly included. --block limits the check to
+the selected policy without changing unrelated instructions. --check is
 report-only: it never writes to a repository. Exit status 1 when any target has
 a drifted or missing block, 2 on usage or input errors.
 """
@@ -38,7 +43,9 @@ import sys
 from pathlib import Path
 
 BLOCK = re.compile(r"<!-- (hraness-[a-z0-9-]+):start -->\n(.*?)<!-- \1:end -->", re.DOTALL)
-ALWAYS = ("hraness-delivery", "hraness-public-copy")
+BROWSER = re.compile(r"<!-- browser-automation:start -->\n(.*?)<!-- browser-automation:end -->", re.DOTALL)
+ALWAYS = ("hraness-delivery", "hraness-public-copy", "browser-automation")
+DEVIN_INSTRUCTION_BYTES = 16 * 1024
 SELF = ".github"
 
 
@@ -57,6 +64,9 @@ def blocks(text: str) -> dict[str, str]:
         name, body = match.group(1), match.group(2)
         body = re.split(rf"^<!-- {re.escape(name)}:additions -->\s*$", body, maxsplit=1, flags=re.MULTILINE)[0]
         out[name] = normalize(body)
+    browser = list(BROWSER.finditer(text))
+    if len(browser) == 1 and text.count("<!-- browser-automation:start -->") == 1 and text.count("<!-- browser-automation:end -->") == 1:
+        out["browser-automation"] = normalize(browser[0].group(1))
     return out
 
 
@@ -83,8 +93,13 @@ def compare(canonical: dict[str, str], agents_md: str | None, facts: dict[str, b
         need = required(name, present, facts)
         if name in present:
             status[name] = "ok" if present[name] == text else "drift"
+            if name == "browser-automation" and status[name] == "ok":
+                match = BROWSER.search(agents_md)
+                if match is None or len(agents_md[:match.end()].encode("utf-8")) > DEVIN_INSTRUCTION_BYTES:
+                    status[name] = "late"
         else:
-            status[name] = "missing" if need else "n/a"
+            markers = name == "browser-automation" and ("<!-- browser-automation:start -->" in agents_md or "<!-- browser-automation:end -->" in agents_md)
+            status[name] = "drift" if markers else ("missing" if need else "n/a")
     return status
 
 
@@ -119,10 +134,10 @@ def local_target(root: Path) -> tuple[str | None, dict[str, bool | None]]:
     return (agents.read_text() if agents.is_file() else None), {"workflows": has_workflows, "releases": None}
 
 
-def org_repos(org: str, visibility: str) -> list[str]:
+def org_repos(org: str, visibility: str, include_forks: bool = False, include_self: bool = False) -> list[str]:
     kind = {"public": "public", "private": "private", "all": "all"}[visibility]
     repos = gh_api(f"orgs/{org}/repos?type={kind}&per_page=100", paginate=True) or []
-    return sorted(r["full_name"] for r in repos if not r.get("archived") and not r.get("fork") and r["name"] != SELF)
+    return sorted(r["full_name"] for r in repos if not r.get("archived") and (include_forks or not r.get("fork")) and (include_self or r["name"] != SELF))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -133,16 +148,24 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--repo", action="append", default=[])
     ap.add_argument("--path", action="append", default=[])
     ap.add_argument("--canonical", default=str(Path(__file__).resolve().parent.parent / "AGENTS.md"))
+    ap.add_argument("--block", action="append", default=[], help="check only the named canonical block (repeatable)")
+    ap.add_argument("--include-forks", action="store_true", help="include active forks in organization discovery")
+    ap.add_argument("--include-self", action="store_true", help="include the organization's .github repository")
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args(argv)
     canonical = blocks(Path(a.canonical).read_text())
     if not canonical:
-        print(f"sync-agent-blocks: no hraness-* blocks in {a.canonical}", file=sys.stderr)
+        print(f"sync-agent-blocks: no shared blocks in {a.canonical}", file=sys.stderr)
         return 2
+    if a.block:
+        unknown = set(a.block) - canonical.keys()
+        if unknown:
+            ap.error("unknown canonical block: " + ", ".join(sorted(unknown)))
+        canonical = {name: canonical[name] for name in a.block}
     targets: list[tuple[str, str]] = [("path", p) for p in a.path] + [("repo", r) for r in a.repo]
     try:
         if a.org:
-            targets += [("repo", r) for r in org_repos(a.org, a.visibility)]
+            targets += [("repo", r) for r in org_repos(a.org, a.visibility, a.include_forks, a.include_self)]
         if not targets:
             ap.error("give --org, --repo or --path")
         results = {}
@@ -153,7 +176,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"sync-agent-blocks: {error}", file=sys.stderr)
         return 2
 
-    drifted = {t: r for t, r in results.items() if any(s in ("drift", "missing") for s in r["blocks"].values())}
+    drifted = {t: r for t, r in results.items() if any(s in ("drift", "missing", "late") for s in r["blocks"].values())}
     if a.json:
         print(json.dumps({"canonical": sorted(canonical), "checked": len(results), "drifted": sorted(drifted), "results": results}, indent=2))
     else:
@@ -165,7 +188,7 @@ def main(argv: list[str] | None = None) -> int:
             for target, result in sorted(drifted.items()):
                 note = "" if result["agents_md"] else " (no AGENTS.md)"
                 print(f"| {target}{note} | " + " | ".join(result["blocks"][n] for n in names) + " |")
-            print("\nCopy each drifted or missing block verbatim from hraness/.github AGENTS.md; keep repository-specific lines after a `<!-- hraness-<name>:additions -->` line.")
+            print("\nCopy each drifted or missing block verbatim from hraness/.github AGENTS.md. Put browser-automation first so hosted agents receive it; use register-browser-policy.py --repo for that scoped update. Keep other repository-specific lines after their `<!-- hraness-<name>:additions -->` line.")
     return 1 if drifted else 0
 
 

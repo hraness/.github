@@ -97,7 +97,41 @@ class SyncAgentBlocksTest(unittest.TestCase):
 
     def test_canonical_file_has_the_distributed_blocks(self):
         names = set(sync.blocks((ROOT / "AGENTS.md").read_text()))
-        self.assertTrue({"hraness-delivery", "hraness-ci", "hraness-public-copy"} <= names)
+        self.assertTrue({"hraness-delivery", "hraness-ci", "hraness-public-copy", "browser-automation"} <= names)
+
+    def test_browser_rule_is_required_and_independent_of_delivery(self):
+        canonical = {"browser-automation": "- Browser rule."}
+        browser = "<!-- browser-automation:start -->\n- Browser rule.\n<!-- browser-automation:end -->\n"
+        self.assertEqual(sync.compare(canonical, None, {}), {"browser-automation": "missing"})
+        self.assertEqual(sync.compare(canonical, browser, {}), {"browser-automation": "ok"})
+        nested = "<!-- hraness-delivery:start -->\n- Delivery.\n" + browser + "<!-- hraness-delivery:end -->\n"
+        self.assertEqual(sync.compare(canonical, nested, {}), {"browser-automation": "ok"})
+
+    def test_browser_rule_duplicates_and_malformed_markers_fail(self):
+        canonical = {"browser-automation": "- Browser rule."}
+        browser = "<!-- browser-automation:start -->\n- Browser rule.\n<!-- browser-automation:end -->\n"
+        for text in (browser * 2, browser.replace("<!-- browser-automation:end -->", ""), browser + "<!-- browser-automation:start -->"):
+            with self.subTest(text=text):
+                self.assertEqual(sync.compare(canonical, text, {}), {"browser-automation": "drift"})
+
+    def test_browser_rule_after_hosted_devin_limit_fails(self):
+        canonical = {"browser-automation": "- Browser rule."}
+        browser = "<!-- browser-automation:start -->\n- Browser rule.\n<!-- browser-automation:end -->\n"
+        self.assertEqual(sync.compare(canonical, "x" * (16 * 1024) + "\n" + browser, {}), {"browser-automation": "late"})
+        self.assertEqual(sync.compare(canonical, "界" * 6000 + "\n" + browser, {}), {"browser-automation": "late"})
+
+    def test_browser_only_check_does_not_require_unrelated_blocks(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            browser = "<!-- browser-automation:start -->\n- Browser rule.\n<!-- browser-automation:end -->\n"
+            canonical = root / "canonical.md"
+            canonical.write_text(CANONICAL + browser)
+            repo = root / "repo"
+            repo.mkdir()
+            (repo / "AGENTS.md").write_text(browser)
+            with redirect_stdout(io.StringIO()) as out:
+                self.assertEqual(sync.main(["--check", "--block", "browser-automation", "--canonical", str(canonical), "--path", str(repo), "--json"]), 0)
+            self.assertIn('"canonical": [\n    "browser-automation"', out.getvalue())
 
 
 if __name__ == "__main__":

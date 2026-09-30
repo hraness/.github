@@ -1,0 +1,13 @@
+{
+  "name": "hraness-browser-automation",
+  "version": "1.0.0",
+  "description": "Always-on public browser automation policy for owned Chrome launches.",
+  "skills": [],
+  "mcpServers": {
+    "paths": [],
+    "exclusive": true
+  },
+  "requiredPlugins": [],
+  "optionalPlugins": [],
+  "forbiddenPlugins": []
+}
