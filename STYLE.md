@@ -173,7 +173,7 @@ Readers trust a page that states its limits plainly. They skim a page that repea
 - Put literal input and interface values in `code`.
 - Use an ellipsis glyph (`…`) only when an action opens another input step.
 - Do not use em dashes in authored text: prose, titles, meta descriptions, social text, alt text, captions, image credits, list separators, and the templates that generate them. Rewrite the sentence instead of substituting a spaced hyphen. Quoted third-party titles keep their own punctuation. Use parentheses only for a short, necessary explanation.
-- Use each product's prose name exactly as its messaging record spells it (`names.name`), including case (xcb, Textbutler, AI Charts, Soundfish, Sys1). The all-capitals `names.catalog` form belongs only in designs that set every name in capitals. Do not use the repository slug or the domain as the name in prose, and do not use a product name as a common noun.
+- Use each product's prose name exactly as its messaging record spells it (`names.name`), including case. The all-capitals `names.catalog` form belongs only in designs that set every name in capitals. Do not use the repository slug or the domain as the name in prose, and do not use a product name as a common noun.
 - Give each destination one label across the header, footer, breadcrumbs, and Markdown twins.
 - Make interpolated counts agree with their nouns (“1 check”, “2 checks”), and test zero, one, and several.
 - Spell out zero through nine in prose. Use numerals for 10 or more, measurements, dates, and money.
