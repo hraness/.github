@@ -134,6 +134,14 @@ Describe the current release in the present tense. Keep chronology in release
 notes; durable documentation does not describe behavior relative to earlier
 versions.
 
+Educational articles explain a durable idea through a useful question, its
+reasoning, and a concrete example. Keep build history, internal file tours,
+review dates, and repeated disclaimers out of their bodies. Keep publication
+and review metadata truthful, and place a material limitation beside the
+decision it affects. Before expanding an article collection, repair stale
+names, broken links, weak explanations, and inconsistent illustrations in the
+existing pages. Follow `STYLE.md` for the shared illustration direction.
+
 ## Adapt to the surface
 
 - **READMEs and documentation landing pages:** orient the reader, establish
