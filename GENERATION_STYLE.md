@@ -77,7 +77,7 @@ This addendum covers the “Introducing” essay on a product's own site, the te
 
 **Evergreen prose.** Keep educational bodies about enduring concepts and useful public behavior. Leave build numbers, review dates, “as of” framing, internal paths, test counts, and deployment history out of the explanation. Keep real publication and review dates in metadata. Retain only limitations that change the reader's decision, beside the affected claim. Repair existing articles before expanding the collection, and add only a distinct question with a substantive example.
 
-**Illustrations.** Follow the product's reviewed illustration style and brand palette: a neutral ground, one dominant brand color, and at most one supporting accent. Generate through Slopcamera, retain the prompt and generation record, and inspect both the article image and card crop. Use one clear visual idea per article and accurate tool credits. The detailed illustration rules are in `STYLE.md`.
+**Illustrations.** Follow the product's reviewed illustration style and brand palette: a neutral ground, one dominant brand color, and at most one supporting accent. Generate through SlopCamera, retain the prompt and generation record, and inspect both the article image and card crop. Use one clear visual idea per article and accurate tool credits. The detailed illustration rules are in `STYLE.md`.
 
 **Links.** Link to another post or product only where it is the reader's next step: along a registered relation between two products, or between a technique post on hraness.com and a product's post about the same technique. Add no link lists, reciprocal links, or related-post sections to reach a count.
 
