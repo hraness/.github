@@ -75,7 +75,7 @@ Accuracy has priority over a local line-editing rule. Record a recurring excepti
 - Write historical facts as history (“Added in v3.3.1”). Do not pin a claim about today to an old release after a newer one has shipped.
 - Derive every install command and version on a page from the package version or the release record, and test that they match. Type a version in one place only.
 - After a rename, pivot, retirement, or restructure, search every surface for the old name and for the nouns that described the old product, follow every internal link, and fix or remove what no longer exists. Update `AGENTS.md`, `CONTRIBUTING.md`, design briefs, and product lists on legal pages in the same change, so the next agent does not restore the old product.
-- Mention a retired product only in a redirect, a changelog, or a “formerly” note. Do not compare the current release with a retired product's release.
+- Mention a retired product only in a redirect, a changelog, or a “formerly” note. Never name or link a retired prototype in public material, not even in a “formerly” note. Do not compare the current release with a retired product's release.
 
 ## Keep one definition per product
 
