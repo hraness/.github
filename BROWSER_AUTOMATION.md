@@ -37,6 +37,22 @@ An explicitly authorized attachment to a person's existing browser is a
 separate operation. Preserve that browser's profile and lifetime; closing an
 owned automation session must not terminate a browser owned by the user.
 
+## Signed-in browser recovery
+
+A signed-in Chrome can accumulate state that blocks process custody and
+diagnostics — for example an executable record left dangling by an in-place
+update. When explicit authorization covers the user's browser, restart it
+through the machine's reviewed recovery command (`hra-chrome-restart`,
+scheduled under the `browser-auth` lane) rather than an agent-owned launch.
+
+The command only restarts a Chrome that is already running: it refuses a cold
+launch, sends TERM to the main process so the session can save, waits for a
+clean exit, and relaunches through LaunchServices (`open -a`) so the new
+browser keeps the user's ownership and lifetime. It then verifies that the
+new process's executable record resolves. It never force-kills; a Chrome that
+ignores TERM is reported, not escalated. This recovery path is separate from
+owned automation launches, which still require provisioned browsers.
+
 ## Slopcamera native-runtime exception
 
 Slopcamera's native runtime may use a signature-verified, version-bound,
