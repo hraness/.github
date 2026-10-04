@@ -22,6 +22,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Check public repositories
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 scripts/sync-dependency-audit.py --check --org hraness --visibility public --include-forks | tee -a "$GITHUB_STEP_SUMMARY"
