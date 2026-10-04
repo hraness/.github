@@ -82,8 +82,8 @@ abbreviated commit are skipped.
 `scripts/sync-dependency-audit.py --check` reports, for each repository, whether
 the workflow is current, outdated, drifted, or missing, with its latest run on
 `main` and the open tracking issue. `.github/workflows/dependency-audit-coverage.yml`
-runs it weekly over public repositories. Check private repositories from a
-signed-in machine:
+runs it weekly over public repositories, forks included. Check private repositories
+from a signed-in machine:
 
 ```sh
 scripts/sync-dependency-audit.py --check --org hraness --visibility private
