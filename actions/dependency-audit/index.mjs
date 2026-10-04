@@ -285,7 +285,7 @@ export async function downloadScanner({ directory, fetchImpl = fetch, platform =
 
 export function runScanner(binary, directory, output) {
   return new Promise((done, fail) => {
-    const child = spawn(binary, ['scan', 'source', '--recursive', '--allow-no-lockfiles', '--format', 'json', '--output', output, directory],
+    const child = spawn(binary, ['scan', 'source', '--recursive', '--allow-no-lockfiles', '--format', 'json', '--output-file', output, directory],
       { stdio: ['ignore', 'inherit', 'pipe'] });
     let stderr = '';
     child.stderr.on('data', chunk => {
