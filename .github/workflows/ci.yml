@@ -50,6 +50,8 @@ jobs:
           package-manager-cache: false
       - name: npm visibility action tests
         run: node --test actions/npm-visible/index.test.mjs
+      - name: Dependency audit action tests
+        run: node --test actions/dependency-audit/index.test.mjs
       - name: Browser template self-test
         run: node templates/verify-public-site-browser.mjs --self-test
       - name: Cost lint of this repository
