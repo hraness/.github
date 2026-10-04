@@ -4,6 +4,7 @@ import json
 import re
 import unittest
 from contextlib import redirect_stdout
+from urllib.parse import unquote
 
 from helpers import ROOT, load_script
 
@@ -12,18 +13,34 @@ lint = load_script("ci-cost-lint")
 
 SHA = "a" * 40
 OLD = "b" * 40
+VERSION = "v1.2.0"
+OLD_VERSION = "v1.1.0"
 
 
 class Template(unittest.TestCase):
-    def test_render_pins_one_full_commit(self):
-        text = sync.render(SHA)
-        self.assertIn(f"- uses: hraness/.github/actions/dependency-audit@{SHA} # main", text)
+    def test_render_pins_one_full_commit_with_its_release(self):
+        text = sync.render(SHA, VERSION)
+        self.assertIn(f"- uses: hraness/.github/actions/dependency-audit@{SHA} # {VERSION}", text)
         self.assertNotIn(sync.PLACEHOLDER, text)
+        self.assertNotIn(sync.VERSION_PLACEHOLDER, text)
         with self.assertRaises(ValueError):
-            sync.render("main")
+            sync.render("main", VERSION)
+        with self.assertRaises(ValueError):
+            sync.render(SHA, "main")
+
+    def test_render_keeps_a_repository_checkout_pin(self):
+        text = sync.render(SHA, VERSION, ("9" * 40, "v7.0.0"))
+        self.assertIn(f"- uses: actions/checkout@{'9' * 40} # v7.0.0", text)
+        self.assertEqual(sync.classify(text, sync.render(SHA, VERSION), True), "ok")
+
+    def test_checkout_pin_prefers_the_most_common_reviewed_pin(self):
+        one = f"      - uses: actions/checkout@{'1' * 40} # v7.0.0\n"
+        two = f"      - uses: actions/checkout@{'2' * 40} # v7.0.1\n"
+        self.assertEqual(sync.checkout_pin([one + one, two]), ("1" * 40, "v7.0.0"))
+        self.assertIsNone(sync.checkout_pin(["      - uses: actions/checkout@v7\n"]))
 
     def test_pull_request_and_push_paths_list_every_scanned_lockfile(self):
-        text = sync.render(SHA)
+        text = sync.render(SHA, VERSION)
         expected = [f'"**/{glob}"' for glob in sync.lockfile_globs()] + ['"**/osv-scanner.toml"', ".github/workflows/dependency-audit.yml"]
         blocks = re.findall(r"    paths:\n((?:      - .+\n)+)", text)
         self.assertEqual(len(blocks), 2)
@@ -31,10 +48,15 @@ class Template(unittest.TestCase):
             self.assertEqual([line.removeprefix("      - ") for line in block.splitlines()], expected)
 
     def test_rendered_workflow_passes_the_cost_lint_in_a_private_repository(self):
-        self.assertEqual(lint.lint_workflow("dependency-audit.yml", sync.render(SHA)), [])
+        self.assertEqual(lint.lint_workflow("dependency-audit.yml", sync.render(SHA, VERSION)), [])
+
+    def test_every_pin_carries_a_version_comment(self):
+        for line in sync.render(SHA, VERSION).splitlines():
+            if "uses:" in line:
+                self.assertRegex(line, r"@[0-9a-f]{40} # v\d+(?:\.\d+){0,2}$")
 
     def test_workflow_is_advisory_and_least_privileged(self):
-        text = sync.render(SHA)
+        text = sync.render(SHA, VERSION)
         self.assertIn("permissions:\n  contents: read\n", text)
         self.assertIn("      contents: read\n      issues: write\n", text)
         self.assertNotIn("Required", text)
@@ -59,20 +81,20 @@ class Lockfiles(unittest.TestCase):
 
 class Classify(unittest.TestCase):
     def test_statuses(self):
-        expected = sync.render(SHA)
+        expected = sync.render(SHA, VERSION)
         self.assertEqual(sync.classify(expected, expected, True), "ok")
-        self.assertEqual(sync.classify(sync.render(OLD), expected, True), "outdated")
+        self.assertEqual(sync.classify(sync.render(OLD, OLD_VERSION), expected, True), "outdated")
         self.assertEqual(sync.classify(expected.replace("37 5 * * *", "0 0 * * *"), expected, True), "drifted")
         self.assertEqual(sync.classify(None, expected, True), "missing")
         self.assertEqual(sync.classify(None, expected, False), "not-applicable")
         self.assertEqual(sync.classify(expected, expected, False), "not-applicable")
 
     def test_a_dependabot_checkout_update_is_still_current(self):
-        expected = sync.render(SHA)
+        expected = sync.render(SHA, VERSION)
         bumped = expected.replace("actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1", f"actions/checkout@{'d' * 40} # v7.1.0")
         self.assertNotEqual(bumped, expected)
         self.assertEqual(sync.classify(bumped, expected, True), "ok")
-        self.assertEqual(sync.classify(bumped.replace(f"@{SHA}", f"@{OLD}"), expected, True), "outdated")
+        self.assertEqual(sync.classify(bumped.replace(f"@{SHA} # {VERSION}", f"@{OLD} # {OLD_VERSION}"), expected, True), "outdated")
         self.assertEqual(sync.classify(expected.replace("# v7.0.1", "# main"), expected, True), "drifted")
 
 
@@ -87,16 +109,18 @@ class FakeGitHub:
             if path.endswith("/pulls"):
                 return {"html_url": f"https://github.com/{path.split('/')[1]}/{path.split('/')[2]}/pull/1"}
             return {}
-        if path.startswith("repos/hraness/.github/commits"):
-            return [{"sha": SHA}]
+        if path.startswith("repos/hraness/.github/tags"):
+            return [{"name": VERSION, "commit": {"sha": SHA}}, {"name": OLD_VERSION, "commit": {"sha": OLD}}, {"name": "v1.10", "commit": {"sha": "f" * 40}}]
         if path.startswith("orgs/"):
             return [{"full_name": f"hraness/{name}", "default_branch": "main", "archived": False, "fork": name == "fork"} for name in self.repos]
         name = path.split("/")[2]
         repo = self.repos.get(name, {})
         if "/git/trees/" in path:
-            return {"tree": [{"path": p, "type": "blob"} for p in repo.get("files", [])], "truncated": False}
-        if "/contents/.github/workflows/dependency-audit.yml" in path:
-            text = repo.get("workflow")
+            files = repo.get("files", []) + ([".github/workflows/dependency-audit.yml"] if repo.get("workflow") else []) + list(repo.get("workflows", {}))
+            return {"tree": [{"path": p, "type": "blob"} for p in files], "truncated": False}
+        if "/contents/" in path:
+            file = unquote(path.split("/contents/", 1)[1].split("?", 1)[0])
+            text = repo.get("workflow") if file == ".github/workflows/dependency-audit.yml" else repo.get("workflows", {}).get(file)
             return {"content": base64.b64encode(text.encode()).decode(), "sha": "blob"} if text else None
         if "/actions/workflows/" in path:
             return {"workflow_runs": [{"conclusion": "failure", "event": "schedule", "html_url": "u", "created_at": "t"}]}
@@ -126,10 +150,10 @@ class Main(unittest.TestCase):
 
     def repos(self):
         return {
-            "current": {"files": ["bun.lock"], "workflow": sync.render(SHA)},
-            "stale": {"files": ["site/bun.lock"], "workflow": sync.render(OLD)},
+            "current": {"files": ["bun.lock"], "workflow": sync.render(SHA, VERSION)},
+            "stale": {"files": ["site/bun.lock"], "workflow": sync.render(OLD, OLD_VERSION)},
             "custom": {"files": ["Cargo.lock"], "workflow": "name: Dependency audit\n"},
-            "absent": {"files": ["uv.lock", "README.md"]},
+            "absent": {"files": ["uv.lock", "README.md"], "workflows": {".github/workflows/ci.yml": f"      - uses: actions/checkout@{'9' * 40} # v7.0.0\n"}},
             "docs": {"files": ["README.md"]},
             "fork": {"files": ["bun.lock"]},
         }
@@ -146,7 +170,7 @@ class Main(unittest.TestCase):
         self.assertEqual(results["hraness/current"]["run"]["conclusion"], "failure")
 
     def test_check_passes_when_every_applicable_repository_is_current(self):
-        repos = {"current": {"files": ["bun.lock"], "workflow": sync.render(SHA)}, "docs": {"files": []}}
+        repos = {"current": {"files": ["bun.lock"], "workflow": sync.render(SHA, VERSION)}, "docs": {"files": []}}
         code, out = self.run_main(FakeGitHub(repos), "--check", "--org", "hraness")
         self.assertEqual(code, 0)
         self.assertIn("1 ok, 0 outdated, 0 drifted, 0 missing, 1 not-applicable", out)
@@ -157,9 +181,10 @@ class Main(unittest.TestCase):
         self.assertEqual(code, 0)
         pulls = sorted(path for method, path, _ in fake.writes if path.endswith("/pulls"))
         self.assertEqual(pulls, ["repos/hraness/absent/pulls", "repos/hraness/custom/pulls", "repos/hraness/fork/pulls", "repos/hraness/stale/pulls"])
-        puts = [(path, body) for method, path, body in fake.writes if method == "PUT"]
-        self.assertTrue(all(body["branch"] == f"hraness/dependency-audit-{SHA[:12]}" for _, body in puts))
-        self.assertTrue(all(base64.b64decode(body["content"]).decode() == sync.render(SHA) for _, body in puts))
+        puts = {path.split("/")[2]: body for method, path, body in fake.writes if method == "PUT"}
+        self.assertTrue(all(body["branch"] == f"hraness/dependency-audit-{VERSION}" for body in puts.values()))
+        self.assertEqual(base64.b64decode(puts["absent"]["content"]).decode(), sync.render(SHA, VERSION, ("9" * 40, "v7.0.0")))
+        self.assertEqual(base64.b64decode(puts["stale"]["content"]).decode(), sync.render(SHA, VERSION))
         self.assertFalse(any("/git/refs/heads/main" in path or body and body.get("branch") == "main" for _, path, body in fake.writes))
 
 
