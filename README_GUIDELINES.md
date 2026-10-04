@@ -87,6 +87,20 @@ Do not make the reader assemble a first task from a command reference. Move
 provider matrices, migration history, configuration catalogs, and exhaustive
 examples below the first successful journey or into focused documentation.
 
+For a library, name the file that receives the example, include its imports, and
+show the returned value or rendered result. For a CLI, distinguish commands from
+output and identify files it creates. Put the first useful task before release
+history. If several supported routes exist, state a default with its reason and
+link to the conditions for choosing another; do not manufacture an integration
+matrix for a package with one path.
+
+A compact documentation map can route directly to setup, task guides, option and
+error reference, and design tradeoffs. Label links by what the reader gets, not
+“click here” or repository filenames alone. Keep configuration defaults and
+side effects in linked reference instead of making the first example exhaustive.
+See [examples, navigation, and discovery](DOCUMENTATION_GUIDELINES.md#make-examples-and-navigation-usable)
+for copy controls, callouts, source parity, and truthful integration intent.
+
 ## Explain behavior through evidence
 
 Use concrete verbs and named objects. Say what the command reads, validates,
