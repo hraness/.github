@@ -27,7 +27,12 @@ The workflow checks out the repository and runs the action on `ubuntu-slim`.
 | Event | Scope | Fails when | Tracking issue |
 | --- | --- | --- | --- |
 | Pull request that changes a lockfile | Every lockfile, compared with the same lockfiles on the base commit | The pull request adds a known vulnerability | Not changed |
-| Push to `main` that changes a lockfile, daily schedule, manual run | Every lockfile on `main` | Any known vulnerability is present | Opened or updated while vulnerabilities remain; closed with a comment when none remain |
+| Push to `main` that changes a lockfile, daily schedule, manual run on `main` | Every lockfile on `main` | Never because of findings | Opened or updated while vulnerabilities remain; closed with a comment when none remain |
+| Manual run on another branch, or any run in a repository with issues turned off | Every lockfile on that branch | Any known vulnerability is present | None |
+
+Existing vulnerabilities live in the issue rather than in a failing run on `main`, so
+they do not turn every commit red or send a failure email each day. A scanner or API
+error fails any run.
 
 The run summary lists the scanned lockfiles and one row per vulnerable package
 version and advisory: severity, the advisory link on osv.dev, fixed versions above

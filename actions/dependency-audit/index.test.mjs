@@ -273,7 +273,7 @@ test('a pull request audit scans head and base and fails only on what it adds', 
   assert.equal(result.issue.action, 'none');
 });
 
-test('a scheduled audit on the default branch fails on any vulnerability and updates the tracking issue', async t => {
+test('a scheduled audit on the default branch records vulnerabilities in the tracking issue and stays green', async t => {
   const { environment, summary } = await actionFixture(t, { repository: { default_branch: 'main' } }, 'schedule');
   const calls = [];
   const fetchImpl = async (url, options = {}) => {
@@ -284,8 +284,9 @@ test('a scheduled audit on the default branch fails on any vulnerability and upd
     return Response.json({ number: 11 }, { status: 201 });
   };
   const pin = { ...scanner, sha256: createHash('sha256').update('binary').digest('hex') };
-  const result = await runAction(environment, { fetchImpl, platform: 'linux', arch: 'x64', scan: async () => sample, pin, lockfiles: () => ['bun.lock'], log: () => {} });
-  assert.equal(result.failed, true);
+  const dependencies = { fetchImpl, platform: 'linux', arch: 'x64', scan: async () => sample, pin, lockfiles: () => ['bun.lock'], log: () => {} };
+  const result = await runAction(environment, dependencies);
+  assert.equal(result.failed, false, 'the issue, not a red run on main, carries existing vulnerabilities');
   assert.deepEqual(result.issue, { action: 'created', number: 11 });
   assert.deepEqual(calls.slice(1), [
     ['GET', 'https://api.github.com/repos/hraness/example/issues'],
@@ -293,9 +294,22 @@ test('a scheduled audit on the default branch fails on any vulnerability and upd
     ['POST', 'https://api.github.com/repos/hraness/example/issues'],
   ]);
   assert.match(await readFile(summary, 'utf8'), /Run: https:\/\/github\.com\/hraness\/example\/actions\/runs\/42/u);
+
   const branch = await actionFixture(t, { repository: { default_branch: 'main' } }, 'workflow_dispatch', 'refs/heads/feature');
-  const other = await runAction(branch.environment, { fetchImpl, platform: 'linux', arch: 'x64', scan: async () => sample, pin, lockfiles: () => [], log: () => {} });
-  assert.equal(other.issue.action, 'none', 'only the default branch owns the tracking issue');
+  const manual = await runAction(branch.environment, dependencies);
+  assert.equal(manual.issue.action, 'none', 'only the default branch owns the tracking issue');
+  assert.equal(manual.failed, true, 'without a tracking issue, the run itself reports existing vulnerabilities');
+
+  const disabled = await actionFixture(t, { repository: { default_branch: 'main' } }, 'schedule');
+  const noIssues = await runAction(disabled.environment, { ...dependencies, fetchImpl: async (url, options) => (
+    String(url).includes('/issues?') ? new Response('Issues are disabled', { status: 410 }) : fetchImpl(url, options)) });
+  assert.deepEqual(noIssues.issue, { action: 'disabled', number: null });
+  assert.equal(noIssues.failed, true, 'a repository with issues disabled falls back to a failing run');
+
+  const clean = await actionFixture(t, { repository: { default_branch: 'main' } }, 'schedule');
+  const advisoriesOnly = { results: [sample.results[2]].map(result => ({ ...result, packages: result.packages.slice(0, 1) })) };
+  const quiet = await runAction(clean.environment, { ...dependencies, scan: async () => advisoriesOnly });
+  assert.equal(quiet.failed, false);
 });
 
 test('the action entrypoint fails visibly outside a Git checkout', async t => {
