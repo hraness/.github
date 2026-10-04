@@ -1,0 +1,14 @@
+name: Dependency audit
+description: Scan every lockfile in the checked-out repository for known vulnerabilities with a pinned OSV-Scanner.
+inputs:
+  github-token:
+    description: Token that reads the base lockfiles of a pull request and updates the tracking issue on the default branch.
+    default: ${{ github.token }}
+outputs:
+  vulnerabilities:
+    description: Known vulnerabilities found in the scanned lockfiles.
+  introduced:
+    description: Vulnerabilities a pull request adds that its base branch does not have; 0 outside pull requests.
+runs:
+  using: node24
+  main: main.mjs
