@@ -112,6 +112,50 @@ For a how-to guide, completeness means reaching its named goal from its
 declared starting state. It need not recreate a new user's entire setup. For a
 tutorial, verify the complete chosen learning journey.
 
+## Make examples and navigation usable
+
+Label code with its language and, when placement matters, its filename or where
+it runs. Include imports, required inputs, and the call that produces the result.
+Keep shell prompts and illustrative output outside copyable commands. A copy
+control must copy the complete authored source, not a truncated preview or only
+the visible lines. Offer language or package-manager choices only for supported
+paths; do not add tabs that imply untested compatibility.
+
+In configuration reference, pair each option with its default and effect. State
+what omitting it does, what changes when it is set, and whether it reads, writes,
+sends data, incurs cost, or requires a restart. Link an error or observed symptom
+to its cause, a safe corrective action, and a recovery check.
+
+Choose callouts by consequence: a note supplies context, a tip offers an optional
+shortcut, and a warning precedes possible data loss, paid work, credential exposure,
+or code execution. Give the warning a concrete title and keep it beside the step.
+Do not turn ordinary instructions into a wall of alerts.
+
+Use descriptive task links, stable heading anchors, and a short next action.
+On websites, use semantic navigation and a main landmark; name separate navigation
+regions and expose the current page. A visual card or tab must retain an ordinary
+link or accessible control. Keep breadcrumbs, page headings, and navigation labels
+consistent without requiring identical wording everywhere.
+
+## Match discovery to the reader's intent
+
+Use exact technology names in useful titles and descriptions when the page actually
+covers them. A title about an integration must lead to that integration's supported
+transport, setup, permissions, and verification, not a generic capability list.
+Distinguish source-checked configuration from a live client or provider test.
+
+A migration guide names the source and destination versions, prerequisites, data
+mapping and losses, non-destructive trial, verification, and recovery. A comparison
+states decision criteria, where the alternative fits, and dated primary sources;
+separate measured results from vendor claims. Prefer repairing an existing guide
+to creating overlapping query-targeted pages. Follow the repository's independent
+editorial review rules for new indexable content.
+
+Markdown, HTML, help, and agent-facing copies must preserve the same instructions,
+limits, links, and disclosures. Generate repeated content from its owning source
+where practical and test parity. Maintain Markdown and `llms.txt` for readers and
+agents that use them, not as promises of ranking, indexing, or AI citations.
+
 ## Describe the product that exists
 
 Bind instructions and claims to the applicable release, interface, platform,
@@ -220,6 +264,14 @@ clones. Explicit local adoption makes the instruction available during work.
 Use this compact rule, adapted to the local guide's format:
 
 > For every documentation surface, follow the [Hraness documentation guidelines](https://github.com/hraness/.github/blob/main/DOCUMENTATION_GUIDELINES.md): distinguish guided learning, task completion, factual reference, and explanation; keep each page or section focused on its reader's need, and link between forms. Verify prerequisites, capabilities, effects, and a complete path to the stated result.
+
+Examples worth consulting include Stripe's [first payment guide](https://docs.stripe.com/payments/accept-a-payment),
+[SDK configuration reference](https://github.com/stripe/stripe-node#configuration),
+and [MCP setup](https://docs.stripe.com/mcp), plus Vercel's
+[documentation navigation](https://vercel.com/docs) and
+[environment-variable reference](https://vercel.com/docs/environment-variables).
+Borrow the useful reader path, code placement, and explicit configuration effects,
+not their product-specific interfaces, full site structure, or visual templates.
 
 This guide adapts Daniele Procida's [Diátaxis framework](https://diataxis.fr/).
 The product evidence, cross-surface ownership, and adoption rules above are
