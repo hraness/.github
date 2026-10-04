@@ -10,15 +10,21 @@ which GitHub's dependency graph does not read.
 
 Every Hraness repository uses the same workflow, rendered from
 [`templates/dependency-audit.yml`](../../templates/dependency-audit.yml) with the
-action pinned to a full commit of this repository. Install or update it with:
+action pinned to the commit of this repository's newest `vX.Y.Z` tag and that
+version as the pin's comment. Install or update it with:
 
 ```sh
 scripts/sync-dependency-audit.py --apply --repo hraness/<name>
 ```
 
 The script opens a pull request with the rendered workflow and enables auto-merge.
-Change the template here rather than a repository's copy: the coverage check below
-reports any difference.
+It keeps the repository's own `actions/checkout` pin, so repositories that review
+each action commit stay consistent. Change the template here rather than a
+repository's copy: the coverage check below reports any difference.
+
+To release a change to the action, merge it, then tag `main` with the next
+`vX.Y.Z`. Each repository's weekly Dependabot update for GitHub Actions moves its
+pin to the new tag, and the coverage check reports any repository still behind.
 
 ## What it checks
 

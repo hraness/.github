@@ -2,13 +2,15 @@
 """Check or install the shared dependency audit workflow in organization repositories.
 
 usage: scripts/sync-dependency-audit.py (--check | --apply) [--org ORG] [--visibility public|private|all]
-                                        [--repo OWNER/NAME ...] [--include-forks] [--action-sha SHA] [--json]
+                                        [--repo OWNER/NAME ...] [--include-forks]
+                                        [--action-version vX.Y.Z] [--json]
 
 Every repository that tracks a lockfile listed in actions/dependency-audit/lockfiles.json
 should carry .github/workflows/dependency-audit.yml exactly as templates/dependency-audit.yml
-renders it, with the action pinned to the newest commit of this repository's main branch
-that changed actions/dependency-audit (or --action-sha). A newer actions/checkout commit
-pinned with its version comment, as Dependabot updates it, still counts as current.
+renders it, with the action pinned to the commit of this repository's newest vX.Y.Z tag
+(or --action-version) and that version as the pin's comment. Any actions/checkout commit
+pinned with its version comment counts as current, so Dependabot updates and a
+repository's own reviewed checkout pin both pass.
 
 Each target is one of:
 
@@ -50,9 +52,12 @@ LOCKFILES = ROOT / "actions" / "dependency-audit" / "lockfiles.json"
 WORKFLOW = ".github/workflows/dependency-audit.yml"
 ACTION = "hraness/.github/actions/dependency-audit"
 PLACEHOLDER = "__ACTION_SHA__"
-USES = re.compile(r"^(\s*- uses: hraness/\.github/actions/dependency-audit@)([0-9a-f]{40})( # main)$", re.MULTILINE)
+VERSION_PLACEHOLDER = "__ACTION_VERSION__"
+USES = re.compile(r"^(\s*- uses: hraness/\.github/actions/dependency-audit@)[0-9a-f]{40} # v\d+\.\d+\.\d+$", re.MULTILINE)
 CHECKOUT = re.compile(r"^(\s*- uses: actions/checkout@)[0-9a-f]{40} # v\d+(?:\.\d+)*$", re.MULTILINE)
+CHECKOUT_PIN = re.compile(r"actions/checkout@([0-9a-f]{40}) # (v\d+(?:\.\d+)*)\s*$", re.MULTILINE)
 SHA = re.compile(r"^[0-9a-f]{40}$")
+VERSION = re.compile(r"^v(\d+)\.(\d+)\.(\d+)$")
 FAILING = ("outdated", "drifted", "missing")
 
 
@@ -86,13 +91,26 @@ def is_lockfile(path: str, globs: list[str]) -> bool:
     return "node_modules" not in parts and any(fnmatch.fnmatchcase(parts[-1], glob) for glob in globs)
 
 
-def render(sha: str) -> str:
+def render(sha: str, version: str, checkout: tuple[str, str] | None = None) -> str:
     if not SHA.match(sha):
         raise ValueError(f"action commit must be a full 40-character SHA, not {sha!r}")
+    if not VERSION.match(version):
+        raise ValueError(f"action version must look like vX.Y.Z, not {version!r}")
     template = TEMPLATE.read_text()
-    if template.count(PLACEHOLDER) != 1:
-        raise ValueError(f"{TEMPLATE} must contain {PLACEHOLDER} exactly once")
-    return template.replace(PLACEHOLDER, sha)
+    if template.count(PLACEHOLDER) != 1 or template.count(VERSION_PLACEHOLDER) != 1:
+        raise ValueError(f"{TEMPLATE} must contain {PLACEHOLDER} and {VERSION_PLACEHOLDER} exactly once")
+    text = template.replace(PLACEHOLDER, sha).replace(VERSION_PLACEHOLDER, version)
+    if checkout is not None:
+        text = CHECKOUT.sub(lambda match: f"{match.group(1)}{checkout[0]} # {checkout[1]}", text)
+    return text
+
+
+def checkout_pin(workflows: list[str]) -> tuple[str, str] | None:
+    pins: dict[tuple[str, str], int] = {}
+    for text in workflows:
+        for match in CHECKOUT_PIN.finditer(text):
+            pins[(match.group(1), match.group(2))] = pins.get((match.group(1), match.group(2)), 0) + 1
+    return max(sorted(pins), key=lambda pin: pins[pin]) if pins else None
 
 
 def classify(current: str | None, expected: str, applicable: bool) -> str:
@@ -103,16 +121,22 @@ def classify(current: str | None, expected: str, applicable: bool) -> str:
     current, expected = (CHECKOUT.sub(r"\1PINNED", text) for text in (current, expected))
     if current == expected:
         return "ok"
-    if USES.sub(r"\1" + "0" * 40 + r"\3", current) == USES.sub(r"\1" + "0" * 40 + r"\3", expected):
+    if USES.sub(r"\1PINNED", current) == USES.sub(r"\1PINNED", expected):
         return "outdated"
     return "drifted"
 
 
-def action_sha() -> str:
-    commits = gh_api(f"repos/hraness/.github/commits?sha=main&path={quote('actions/dependency-audit')}&per_page=1")
-    if not commits:
-        raise RuntimeError("found no commit of actions/dependency-audit on hraness/.github main")
-    return commits[0]["sha"]
+def action_release(version: str | None = None) -> tuple[str, str]:
+    tags = gh_api("repos/hraness/.github/tags?per_page=100", paginate=True) or []
+    releases = {t["name"]: t["commit"]["sha"] for t in tags if VERSION.match(t.get("name", ""))}
+    if version is not None:
+        if version not in releases:
+            raise RuntimeError(f"hraness/.github has no {version} tag")
+        return releases[version], version
+    if not releases:
+        raise RuntimeError("hraness/.github has no vX.Y.Z tag for the dependency audit action")
+    newest = max(releases, key=lambda name: tuple(int(part) for part in VERSION.match(name).groups()))
+    return releases[newest], newest
 
 
 def org_repos(org: str, visibility: str, include_forks: bool) -> list[dict]:
@@ -127,16 +151,23 @@ def repo_info(name: str) -> dict:
     return info
 
 
-def inspect(repo: dict, expected: str, globs: list[str]) -> dict:
+def read_file(name: str, path: str, branch: str) -> str | None:
+    blob = gh_api(f"repos/{name}/contents/{quote(path)}?ref={quote(branch)}")
+    return base64.b64decode(blob["content"]).decode() if isinstance(blob, dict) and blob.get("content") else None
+
+
+def inspect(repo: dict, sha: str, version: str, globs: list[str]) -> dict:
     name, branch = repo["full_name"], repo.get("default_branch") or "main"
     tree = gh_api(f"repos/{name}/git/trees/{quote(branch)}?recursive=1") or {}
     paths = [item["path"] for item in tree.get("tree", []) if item.get("type") == "blob"]
     lockfiles = sorted(path for path in paths if is_lockfile(path, globs))
-    blob = gh_api(f"repos/{name}/contents/{WORKFLOW}?ref={quote(branch)}")
-    current = base64.b64decode(blob["content"]).decode() if isinstance(blob, dict) and blob.get("content") else None
+    current = read_file(name, WORKFLOW, branch) if WORKFLOW in paths else None
+    others = [path for path in paths if path.startswith(".github/workflows/") and path.endswith((".yml", ".yaml")) and path != WORKFLOW]
+    pin = checkout_pin([current] if current else []) or (checkout_pin([read_file(name, path, branch) or "" for path in others]) if lockfiles else None)
+    expected = render(sha, version, pin)
     status = classify(current, expected, bool(lockfiles))
     entry = {"repo": name, "branch": branch, "status": status, "lockfiles": len(lockfiles), "truncated": bool(tree.get("truncated")),
-             "run": None, "issue": None}
+             "run": None, "issue": None, "expected": expected}
     if current is not None:
         runs = gh_api(f"repos/{name}/actions/workflows/dependency-audit.yml/runs?branch={quote(branch)}&per_page=1") or {}
         latest = (runs.get("workflow_runs") or [None])[0]
@@ -153,7 +184,7 @@ def inspect(repo: dict, expected: str, globs: list[str]) -> dict:
 PR_TITLE = "Run the shared dependency audit"
 PR_BODY = """## Summary
 
-- Adds or updates `.github/workflows/dependency-audit.yml` from `templates/dependency-audit.yml` in hraness/.github, pinned to action commit `{sha}`.
+- Adds or updates `.github/workflows/dependency-audit.yml` from `templates/dependency-audit.yml` in hraness/.github, pinned to the `{version}` release of the action.
 - The audit scans every tracked lockfile with a pinned OSV-Scanner on pull requests that change a lockfile, on pushes to `main`, daily, and on demand.
 - A pull request fails the audit only when it adds a known vulnerability. The run on `main` keeps one `dependency-audit` issue current with every known vulnerability and closes it when none remain.
 - The check is advisory: do not add it to required checks.
@@ -165,9 +196,9 @@ PR_BODY = """## Summary
 """
 
 
-def open_pull_request(entry: dict, content: str, sha: str) -> str:
-    name, base = entry["repo"], entry["branch"]
-    branch = f"hraness/dependency-audit-{sha[:12]}"
+def open_pull_request(entry: dict, version: str) -> str:
+    name, base, content = entry["repo"], entry["branch"], entry["expected"]
+    branch = f"hraness/dependency-audit-{version}"
     existing = gh_api(f"repos/{name}/pulls?state=open&head={quote(name.split('/')[0] + ':' + branch)}") or []
     if existing:
         return existing[0]["html_url"]
@@ -175,13 +206,13 @@ def open_pull_request(entry: dict, content: str, sha: str) -> str:
     if gh_api(f"repos/{name}/git/ref/heads/{quote(branch)}") is None:
         gh_api(f"repos/{name}/git/refs", method="POST", body={"ref": f"refs/heads/{branch}", "sha": head["object"]["sha"]})
     current = gh_api(f"repos/{name}/contents/{WORKFLOW}?ref={quote(branch)}")
-    body = {"message": f"{PR_TITLE}\n\nInstall the dependency audit workflow from hraness/.github at {sha}.",
+    body = {"message": f"{PR_TITLE}\n\nInstall the dependency audit workflow from hraness/.github {version}.",
             "content": base64.b64encode(content.encode()).decode(), "branch": branch}
     if isinstance(current, dict) and current.get("sha"):
         body["sha"] = current["sha"]
     gh_api(f"repos/{name}/contents/{WORKFLOW}", method="PUT", body=body)
     pull = gh_api(f"repos/{name}/pulls", method="POST",
-                  body={"title": PR_TITLE, "head": branch, "base": base, "body": PR_BODY.format(sha=sha)})
+                  body={"title": PR_TITLE, "head": branch, "base": base, "body": PR_BODY.format(version=version)})
     url = pull["html_url"]
     merge = run([gh(), "pr", "merge", "--auto", "--squash", url])
     if merge.returncode != 0:
@@ -206,29 +237,31 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--visibility", choices=["public", "private", "all"], default="public")
     ap.add_argument("--repo", action="append", default=[])
     ap.add_argument("--include-forks", action="store_true", help="include active forks in organization discovery")
-    ap.add_argument("--action-sha", help="pin this commit instead of the newest commit that changed the action")
+    ap.add_argument("--action-version", help="pin this vX.Y.Z tag of hraness/.github instead of the newest one")
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args(argv)
     if not a.org and not a.repo:
         ap.error("give --org or --repo")
     try:
-        sha = a.action_sha or action_sha()
-        expected = render(sha)
+        sha, version = action_release(a.action_version)
+        render(sha, version)
         globs = lockfile_globs()
         repos = org_repos(a.org, a.visibility, a.include_forks) if a.org else []
         repos += [repo_info(name) for name in a.repo if name not in {r["full_name"] for r in repos}]
-        results = [inspect(repo, expected, globs) for repo in repos]
+        results = [inspect(repo, sha, version, globs) for repo in repos]
         if a.apply:
             for entry in results:
                 if entry["status"] in FAILING:
-                    entry["pull_request"] = open_pull_request(entry, expected, sha)
+                    entry["pull_request"] = open_pull_request(entry, version)
     except (RuntimeError, ValueError) as error:
         print(f"sync-dependency-audit: {error}", file=sys.stderr)
         return 2
+    for entry in results:
+        entry.pop("expected", None)
     if a.json:
-        print(json.dumps({"action_sha": sha, "results": results}, indent=2))
+        print(json.dumps({"action_sha": sha, "action_version": version, "results": results}, indent=2))
     else:
-        print(f"Dependency audit coverage, action {ACTION}@{sha[:12]}\n")
+        print(f"Dependency audit coverage, action {ACTION} {version} ({sha[:12]})\n")
         for entry in results:
             print(describe(entry) + (f"\n               pull request: {entry['pull_request']}" if entry.get("pull_request") else ""))
         counts = {status: sum(1 for e in results if e["status"] == status) for status in ("ok", *FAILING, "not-applicable")}
