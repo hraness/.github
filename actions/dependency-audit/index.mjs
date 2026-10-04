@@ -349,7 +349,8 @@ export async function fetchBaseLockfiles({ github, repository, ref, paths, direc
 
 export async function syncIssue({ github, repository, findings, report }) {
   const vulnerable = findings.filter(finding => !finding.informational);
-  const open = await github(`/repos/${repository}/issues?state=open&labels=${issueLabel}&per_page=100`);
+  const open = await github(`/repos/${repository}/issues?state=open&labels=${issueLabel}&per_page=100`, { allow: [410] });
+  if (open.status === 410) return { action: 'disabled', number: null };
   const existing = list(open.data).filter(issue => !issue.pull_request && issue.title.startsWith('Dependency audit:'));
   const [current, ...duplicates] = existing.sort((left, right) => left.number - right.number);
   for (const duplicate of duplicates) {
@@ -423,16 +424,19 @@ export async function runAction(environment = process.env, dependencies = {}) {
   const vulnerable = findings.filter(finding => !finding.informational);
   const added = introduced === null ? [] : introduced.filter(finding => !finding.informational);
   const defaultBranch = event.repository?.default_branch;
-  let issue = { action: 'none', number: null };
+  const untracked = { action: 'none', number: null };
+  let issue = untracked;
   if (introduced === null && defaultBranch && environment.GITHUB_REF === `refs/heads/${defaultBranch}`
     && ['schedule', 'workflow_dispatch', 'push'].includes(environment.GITHUB_EVENT_NAME)) {
     issue = await syncIssue({ github, repository, findings, report });
     if (issue.number !== null) log(`Tracking issue #${issue.number} ${issue.action}`);
+    if (issue.action === 'disabled') log('Issues are disabled in this repository, so the run fails while vulnerabilities remain.');
   }
   if (environment.GITHUB_OUTPUT) {
     await appendFile(environment.GITHUB_OUTPUT, `vulnerabilities=${rows(vulnerable).length}\nintroduced=${rows(added).length}\n`, 'utf8');
   }
-  const failed = introduced === null ? vulnerable.length > 0 : added.length > 0;
+  const issueKept = issue !== untracked && issue.action !== 'disabled';
+  const failed = introduced === null ? vulnerable.length > 0 && !issueKept : added.length > 0;
   log(introduced === null
     ? (vulnerable.length === 0 ? 'No known vulnerabilities.' : `${countLine(vulnerable)}.`)
     : (added.length === 0 ? 'This pull request adds no known vulnerabilities.' : `This pull request adds ${countLine(added)}.`));

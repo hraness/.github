@@ -155,7 +155,7 @@ PR_BODY = """## Summary
 
 - Adds or updates `.github/workflows/dependency-audit.yml` from `templates/dependency-audit.yml` in hraness/.github, pinned to action commit `{sha}`.
 - The audit scans every tracked lockfile with a pinned OSV-Scanner on pull requests that change a lockfile, on pushes to `main`, daily, and on demand.
-- A pull request fails the audit only when it adds a known vulnerability; the scheduled run on `main` fails while any is present and keeps one `dependency-audit` issue current.
+- A pull request fails the audit only when it adds a known vulnerability. The run on `main` keeps one `dependency-audit` issue current with every known vulnerability and closes it when none remain.
 - The check is advisory: do not add it to required checks.
 
 #### Test plan
