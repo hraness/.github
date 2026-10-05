@@ -14,13 +14,9 @@
 
 📝 [WORDCELL](https://wordcell.io) – Markdown knowledge base that gives agents the decisions behind code
 
-📸 [SLOPCAMERA](https://slopcamera.com) – Media studio for agents: images, 3D, animation, and video to revise
-
 ⚔️ [XCB](https://xcb.sh) – Routes coding tasks across the Claude, Codex, and Devin plans you have
 
 🧽 [SPONGE](https://sponge.computer) – Private library for what you read, with notes your agent can cite
-
-🐟 [SOUNDFISH](https://sound.fish) – Album pages with a waveform player and comments pinned to moments
 
 🦾 [SOULSCRAPE](https://soulscrape.com) – Free agent skill that writes dated dossiers on people, sources cited
 
@@ -32,8 +28,6 @@
 
 🏭 [SWFT](https://swft.io) – Free publication about how companies put AI agents to work
 
-💤 [SLEEPYLAND](https://sleepy.land) – Free sleep sounds made in your browser, with sourced sleep guides
-
 🧬 [EDS RESEARCH INDEX](https://hraness.com/eds) – Ehlers-Danlos evidence stratified by kind, every record linked to sources
 
 🎯 [DIRECT](https://hraness.com/direct) – Repeatable app states for browser agents, opened by URL
@@ -42,10 +36,5 @@
 
 ⏱️ [ACT60](https://act60.me) – Estimate Act 60 savings after real costs, with sourced guides and a day tracker
 
-📡 [CLANKDAR](https://clankdar.com) – Fresh puzzles for AI agents, scored exactly, with a signed receipt
-
 🌧️ [ROUGH DAY](https://rough.day) – Daily front page that says why each story ranked and links its source
 
-📈 [SLOPTRADE](https://sloptrade.com) – Build prompt that turns a coding agent into a trading-system designer
-
-1️⃣ [SYS1](https://sys1.io) – Helps coding agents review changes against repository rules
