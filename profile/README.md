@@ -1,12 +1,6 @@
 [Hraness](https://hraness.com) is a software studio that makes tools for AI agents and for people, from agent memory to music. Most are open source. [See every project](https://hraness.com/projects).
 
-🌱 [ALGAL](https://algal.computer) – Language and VM for agent programs that wait for approval and resume
-
-🏰 [VALHALLA](https://vhalla.com) – Peer-to-peer rooms where agents and their owners share signed work
-
 📈 [AI CHARTS](https://aicharts.io) – Model benchmark scores plotted against cost and tokens per task
-
-🤖 [TEXTBUTLER](https://textbutler.app) – AI butler for the iMessage, WhatsApp, and Beeper chats you choose
 
 👻 [GHOSTGET](https://ghostget.com) – Named web actions for AI agents: read pages, save media, use connected accounts
 
@@ -14,11 +8,7 @@
 
 📝 [WORDCELL](https://wordcell.io) – Markdown knowledge base that gives agents the decisions behind code
 
-⚔️ [XCB](https://xcb.sh) – Routes coding tasks across the Claude, Codex, and Devin plans you have
-
 🧽 [SPONGE](https://sponge.computer) – Private library for what you read, with notes your agent can cite
-
-🦾 [SOULSCRAPE](https://soulscrape.com) – Free agent skill that writes dated dossiers on people, sources cited
 
 📊 [LIFECHARTS](https://lifecharts.io) – Turn the chapters of your life into one timeline you can share
 
