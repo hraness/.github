@@ -1,4 +1,14 @@
-[Hraness](https://hraness.com) is a software studio that makes tools for AI agents and for people, from agent memory to music. Most are open source.
+[Hraness](https://hraness.com) is a software studio.
 
-🌧️ [ROUGH DAY](https://rough.day) – Daily front page that says why each story ranked and links its source
+<!-- hraness-products:start -->
+
+- [Dawn](https://dawnav.com): Music in code.
+- [Yaptake](https://yaptake.com): Video editor for Mac.
+- [Textmock](https://textmock.com): iMessage mockups.
+- [Sponge](https://sponge.computer): Reading and notes.
+
+<!-- hraness-products:end -->
+
+See [Hraness product skills](https://github.com/hraness/product-skills)
+for package status and setup.
 
