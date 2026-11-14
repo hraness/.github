@@ -1,0 +1,43 @@
+name: Update current product links
+
+on:
+  schedule:
+    - cron: '17 10 * * *'
+  workflow_dispatch:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: current-product-profile
+  cancel-in-progress: false
+
+jobs:
+  synchronize:
+    if: >-
+      github.repository == 'hraness/.github' &&
+      github.repository_id == '1342874802' &&
+      github.repository_owner_id == '307125679' &&
+      github.event.repository.default_branch == 'main' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name != 'workflow_run' ||
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_repository.id == 1342874802 &&
+        github.event.workflow_run.head_repository.full_name == github.repository &&
+        (startsWith(github.event.workflow_run.head_branch, 'automation/profile-') ||
+         startsWith(github.event.workflow_run.head_branch, 'dependabot/github_actions/'))))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      checks: read
+    steps:
+      - uses: hraness/product-skills/actions/sync-profile@b95bdf8f9dda39b6fe990038b5d42137043dfaa1 # v0.1.7
+        with:
+          mode: ${{ github.event_name == 'workflow_run' && 'deliver' || 'refresh' }}
+          check-workflow: ci.yml
+          app-id: ${{ vars.DISTRIBUTION_APP_ID }}
+          app-private-key: ${{ secrets.DISTRIBUTION_APP_PRIVATE_KEY }}

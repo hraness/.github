@@ -48,6 +48,8 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
+      - name: Check the marked current-product list
+        uses: hraness/product-skills/actions/check-profile@b95bdf8f9dda39b6fe990038b5d42137043dfaa1 # v0.1.7
       - name: npm visibility action tests
         run: node --test actions/npm-visible/index.test.mjs
       - name: Dependency audit action tests
