@@ -14,6 +14,7 @@
 - `RELEASES.md` defines the GitHub Release page every product ships: title, summary, changes, install, verify, and the trailing identity record, with notes taken from `CHANGELOG.md`.
 - `MESSAGING.md` defines the Hraness voice, product names, the messaging record each product carries in the portfolio registry (category, tagline, short, meta, medium, long), which surface uses each field, and the limits for launch-day social posts.
 - `GENERATION_STYLE.md` holds the versioned instruction block for models that write published text.
+- `ARTICLE_COPY.md` is the article guide: the parts of an article, the post shapes (including the launch beats of “Introducing a product”), the drafting and review note, admission, freshness, and interlinking.
 - `CONTRIBUTING.md` provides default contributor guidance for repositories without their own.
 - `SUPPORT_INVITATIONS.md` describes shared optional signup and support adoption across product surfaces.
 - `.agents/skills/` contains portable repository orchestration skills.
@@ -53,8 +54,9 @@
 <!-- hraness-releases:end -->
 
 <!-- hraness-articles:start -->
-- Essays and blog posts follow the essay addendum in `GENERATION_STYLE.md` and `ARTICLE_COPY.md` in `@hraness/design-kit`. The byline is “Hraness”, every post shows the provenance note naming its recorded reviewer, and no AI-drafted post is credited to a person unless that person rewrites and adopts it.
-- Take product names, one-line descriptions, addresses, status labels, and relations from the portfolio facts in `@hraness/design-kit`. Render versions from the release record (`package.json`, a published-release file), never typed by hand.
+- Essays and blog posts follow the essay addendum in `GENERATION_STYLE.md` and `ARTICLE_COPY.md` in hraness/.github. The byline is “Hraness”, every post shows the provenance note naming its recorded reviewer, and no AI-drafted post is credited to a person unless that person rewrites and adopts it.
+- Take product names, one-line descriptions, addresses, status labels, and relations from the portfolio registry, as `MESSAGING.md` in hraness/.github describes. Render versions from the release record (`package.json`, a published-release file), never typed by hand.
+- Keep article components, admission records, and their checks in the site's own source. `@hraness/design-kit` is frozen: add no new dependency on it, and copy what a site still uses into that site.
 - Write a “How X uses Y” post only for a registered relation that has a description. Change the relation and its post in the same change. Link between products only along registered relations, and between a technique post and product posts about the same technique.
 - Every post has a review record: reader job, non-obvious answer, sources with the date checked, owner, reviewer identity, reviewer type (`ai` or `human`), a score out of 12, and a `reassessOn` date 28 to 56 days after review. The reviewer is independent of the run or person that drafted the post. An AI reviewer is recorded and shown as AI; `humanReview` stays null unless a person reviewed the post.
 - A new post starts out of search indexes, sitemaps, and feeds. It becomes indexable only when its review record is complete, scores at least 9 of 12 with no zero score, and the page shows the provenance note.
@@ -62,8 +64,8 @@
 <!-- hraness-articles:end -->
 
 <!-- hraness-launch:start -->
-- Launch posts, their social posts, product mockups, and launch films follow the launch beats and social posts addendum in `GENERATION_STYLE.md` and the beats shape under “Introducing a product” in `ARTICLE_COPY.md` in `@hraness/design-kit`. Channel limits are in the launch posts section of `MESSAGING.md`.
-- Build them with the `product-launch` agent skill, the `./mockups` and `./launch` exports of `@hraness/design-kit`, and `slopcamera html init --template launch-film`.
+- Launch posts, their social posts, product mockups, and launch films follow the launch beats and social posts addendum in `GENERATION_STYLE.md` and the beats shape under “Introducing a product” in `ARTICLE_COPY.md` in hraness/.github. Channel limits are in the launch posts section of `MESSAGING.md`.
+- Build them with the `product-launch` agent skill and `slopcamera html init --template launch-film`. Keep the launch data, its checks, and the product mockups in the product's own source; do not import them from `@hraness/design-kit`, which is frozen.
 - Take every number in a beat, social post, film caption, or store listing from the product's launch facts module, and the status from the release record. Keep mockup accessible descriptions accurate; visible captions are optional and must add useful context.
 - The social kit emits posts for X, Bluesky, Threads, and LinkedIn, and a fact sheet for the Show HN post and the Product Hunt first comment. A person writes those two.
 <!-- hraness-launch:end -->

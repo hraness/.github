@@ -57,7 +57,7 @@ Add the one that matches your output after the block. Essays and blog posts, and
 
 ## Essay and blog post addendum
 
-This addendum covers the “Introducing” essay on a product's own site, the technique series about how Hraness builds software, product posts about one technique, and “How X uses Y” posts about one product's use of another. The article guide, `ARTICLE_COPY.md` in `@hraness/design-kit`, holds the detailed rules for titles, summary lines, layout, and review records. Paste the block above into the drafting prompt, then this addendum.
+This addendum covers the “Introducing” essay on a product's own site, the technique series about how Hraness builds software, product posts about one technique, and “How X uses Y” posts about one product's use of another. The article guide, [`ARTICLE_COPY.md`](ARTICLE_COPY.md), holds the detailed rules for titles, summary lines, layout, and review records. Paste the block above into the drafting prompt, then this addendum.
 
 **Shapes.**
 
@@ -67,7 +67,7 @@ This addendum covers the “Introducing” essay on a product's own site, the te
 - A provider's hub page lists the “How {consumer} uses {provider}” posts for that provider, one line each, taken from the registered relations.
 - The “Introducing” and “How X uses Y” title formulas may repeat across a series. Every other title states the post's claim as a sentence.
 
-**Facts.** Take product names, one-line descriptions, addresses, status labels, and relations from the portfolio facts that ship with `@hraness/design-kit`. Take versions from the release record. Take every number from source code, test output, or a cited primary source with the date it was checked. Invent no number, benchmark, user, customer, quotation, or anecdote.
+**Facts.** Take product names, one-line descriptions, addresses, status labels, and relations from the portfolio registry described in [`MESSAGING.md`](MESSAGING.md). Take versions from the release record. Take every number from source code, test output, or a cited primary source with the date it was checked. Invent no number, benchmark, user, customer, quotation, or anecdote.
 
 **Voice and byline.** The byline is “Hraness”. Do not write in the first person as the owner or any other person, and do not attribute opinions, motives, habits, or experiences to a named person without a source that states them. Never credit an AI-drafted post to a person. If a person later rewrites and adopts a post, the byline and the note below change to match what that person did.
 
@@ -85,7 +85,7 @@ This addendum covers the “Introducing” essay on a product's own site, the te
 
 ## Launch beats and social posts addendum
 
-This addendum covers the beats of an “Introducing {product}” post and the social posts made from them: an X thread, Bluesky, Threads, a LinkedIn post, and the captions of a vertical video. `ARTICLE_COPY.md` in `@hraness/design-kit` defines the beats shape under “Introducing a product”, and `MESSAGING.md` gives each channel's limits. Paste the block above into the drafting prompt, then the essay addendum, then this addendum.
+This addendum covers the beats of an “Introducing {product}” post and the social posts made from them: an X thread, Bluesky, Threads, a LinkedIn post, and the captions of a vertical video. [`ARTICLE_COPY.md`](ARTICLE_COPY.md) defines the beats shape under “Introducing a product”, and `MESSAGING.md` gives each channel's limits. Paste the block above into the drafting prompt, then the essay addendum, then this addendum.
 
 **One claim per post.** Each beat is also a post, and each post stands alone: a reader who sees only that post learns one true thing about the product. Do not continue a sentence across posts or refer to “above” or “the next post”.
 
