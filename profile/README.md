@@ -10,6 +10,9 @@
 - [Sponge](https://sponge.computer): Reading and notes.
 
 <!-- hraness-products:end -->
+
+## Side projects
+
 - [Rough Day](https://rough.day): Daily front page that says why each story ranked.
 
 ## Open source
