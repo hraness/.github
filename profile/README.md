@@ -21,9 +21,7 @@
 - [ra](https://github.com/hraness/ra): UI testing for agents that says in sentences what a person would find wrong. Read about it at [hraness.com/ra](https://hraness.com/ra/).
 - [Stripe History](https://github.com/hraness/stripe-history): Dated, sourced record of how Stripe grew, with the data as YAML. Read it at [hraness.com/stripe](https://hraness.com/stripe).
 - [Dawn SDK](https://github.com/hraness/dawn-sdk): Sounds, sound packs and song scores for Dawn, in TypeScript.
-- [yiii](https://github.com/hraness/yiii): Reading practice for heritage Mandarin speakers, in the terminal.
 - [Agent Skills](https://github.com/hraness/skillpack): Skills for repository work and multi-phase delivery with review.
 - [Product skills](https://github.com/hraness/product-skills): Agent skills for Dawn, Yaptake, Textmock and Sponge.
-- [apple-foundation](https://github.com/hraness/apple-foundation): Apple's on-device Foundation Models from Rust or over JSON lines.
 - [@hraness/ui](https://github.com/hraness/ui): Accessible React Aria components with StyleX styles and CSS tokens.
 - [@hraness/web-discovery](https://github.com/hraness/web-discovery): Next.js metadata, sitemaps, feeds, JSON-LD and social cards from one site record.
