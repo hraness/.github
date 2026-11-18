@@ -46,6 +46,7 @@
 - The delivery vocabulary in this file (admission, qualification, custody, receipt, bounded, lane, gate, surface, projection) is internal. Translate it into what the reader gets.
 - Take product and sibling names and messaging (category, tagline, short, meta, medium, long) from the portfolio registry, as `MESSAGING.md` in hraness/.github describes, and versions from the release record. Tests pin facts, not prose.
 - Run `bun run check:copy` before handoff when the repository has it.
+- Time-limited copy and behavior, such as an offer, its code field at checkout, a deadline or an event notice, carry their end in source and stop by themselves. Compare the time with the end where the page is built, served or run, so nothing has to be removed later. A page that is only built at deploy time also needs a refresh after the end, such as timed regeneration, removal by the page's own script, or a scheduled deploy.
 <!-- hraness-public-copy:end -->
 
 <!-- hraness-releases:start -->
