@@ -20,7 +20,7 @@
 
 - [Stripe History](https://github.com/hraness/stripe-history): Dated, sourced record of how Stripe grew, with the data as YAML. Read it at [hraness.com/stripe](https://hraness.com/stripe).
 - [Dawn SDK](https://github.com/hraness/dawn-sdk): Sounds, sound packs and song scores for Dawn, in TypeScript.
-- [Lunar](https://github.com/hraness/lunar): Reading practice for heritage Mandarin speakers, in the terminal.
+- [yiii](https://github.com/hraness/yiii): Reading practice for heritage Mandarin speakers, in the terminal.
 - [Agent Skills](https://github.com/hraness/skillpack): Skills for repository work and multi-phase delivery with review.
 - [Product skills](https://github.com/hraness/product-skills): Agent skills for Dawn, Yaptake, Textmock and Sponge.
 - [apple-foundation](https://github.com/hraness/apple-foundation): Apple's on-device Foundation Models from Rust or over JSON lines.
