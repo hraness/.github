@@ -26,4 +26,3 @@
 - [apple-foundation](https://github.com/hraness/apple-foundation): Apple's on-device Foundation Models from Rust or over JSON lines.
 - [@hraness/ui](https://github.com/hraness/ui): Accessible React Aria components with StyleX styles and CSS tokens.
 - [@hraness/web-discovery](https://github.com/hraness/web-discovery): Next.js metadata, sitemaps, feeds, JSON-LD and social cards from one site record.
-- [@hraness/result](https://github.com/hraness/result): Result and Option types for TypeScript.
