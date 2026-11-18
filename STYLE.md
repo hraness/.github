@@ -268,12 +268,12 @@ A prompt, skill, or template that makes a model write published text is public c
 
 - Tests pin facts: commands, versions, counts, limits, prices, legal text, and links that resolve. They do not pin headings, taglines, or prose sentences. When a test protects a limit, it asserts the limit in plain words.
 - Assert the shape of a real value, such as a run URL that matches `/runs/\d{10,}/`, never a placeholder.
-- A test or validator may require that a disclosure exists and matches the provenance record. It may not require a reviewer name or a review claim, except that an essay or blog post's provenance note must match its review record.
+- A test or validator may require that an essay or blog post's provenance note exists and matches its review record. No test requires an AI-drafting disclosure, a reviewer name, or a review claim on any other page.
 - Guides, briefs, examples, schemas, and fixtures are copy one step removed; agents copy them word for word. Keep taglines, slogans, and internal vocabulary out of them. Do not define a field every item must fill, such as a `closing` line, whose role invites a closer or a slogan. A product's messaging `tagline` is a sentence with one claim the page proves, defined in `MESSAGING.md`.
 
 ## Say who wrote and who checked
 
-- Show AI-drafting disclosure on hraness.com through its shared disclosure component, on every page with AI-drafted text. Essays and blog posts on any Hraness site also show the provenance note from [`GENERATION_STYLE.md`](GENERATION_STYLE.md), naming the recorded reviewer. Other pages on other Hraness sites and products do not carry AI-drafting disclosures, labels, or badges.
+- Hraness sites and products, hraness.com included, do not carry AI-drafting disclosures, labels, or badges. Essays and blog posts are the exception: on any Hraness site they show the provenance note from [`GENERATION_STYLE.md`](GENERATION_STYLE.md), naming the recorded reviewer.
 - Everywhere, keep a record of who drafted and who reviewed generated or agent-drafted text: the author, an independent human, or an AI agent, by name.
 - Never credit AI-drafted text to a person as its sole author, never describe AI review as human review, and never claim a review that has no record. A page without a review record makes no review claim.
 - Text an agent posts from a person's account does not claim that person wrote AI-drafted work.
