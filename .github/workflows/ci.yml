@@ -49,7 +49,7 @@ jobs:
           node-version: '24'
           package-manager-cache: false
       - name: Check the marked current-product list
-        uses: hraness/product-skills/actions/check-profile@0ab5d4d1bde9099d1c24a3f1a81c675ffa53b53f # v0.1.88
+        uses: hraness/product-skills/actions/check-profile@eaa2257105b7bb3ce7e61c8f3a117134be620ca0 # recognizes aicharts
       - name: npm visibility action tests
         run: node --test actions/npm-visible/index.test.mjs
       - name: Dependency audit action tests
