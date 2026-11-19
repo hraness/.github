@@ -4,7 +4,7 @@
 
 <!-- hraness-products:start -->
 
-- [Dawn](https://dawnav.com): Music in code.
+- [DAWN](https://dawnav.com): Music in code.
 - [Yaptake](https://yaptake.com): Video editor for Mac.
 - [Textmock](https://textmock.com): iMessage mockups.
 - [Sponge](https://sponge.computer): Reading and notes.
