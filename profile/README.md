@@ -5,10 +5,12 @@
 <!-- hraness-products:start -->
 
 - [DAWN](https://dawnav.com): Music in code.
+- [OH](https://oh.computer): Keeps your coding agents working.
+- [Sponge](https://sponge.computer): Reading and notes.
 - [Yaptake](https://yaptake.com): Video editor for Mac.
 - [Textmock](https://textmock.com): iMessage mockups.
-- [Sponge](https://sponge.computer): Reading and notes.
 - [yiii](https://yiii.io): Learn languages faster (ZH + ES).
+- [aicharts](https://aicharts.io): Compare coding models by score, reasoning effort, and cost per task.
 
 <!-- hraness-products:end -->
 
