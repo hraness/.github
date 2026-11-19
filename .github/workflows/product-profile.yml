@@ -35,7 +35,7 @@ jobs:
       contents: read
       checks: read
     steps:
-      - uses: hraness/product-skills/actions/sync-profile@eaa2257105b7bb3ce7e61c8f3a117134be620ca0 # recognizes aicharts
+      - uses: hraness/product-skills/actions/sync-profile@3236d9708fbbf4c2e5ee00e9263647c8ee72d527 # recognizes OH
         with:
           mode: ${{ github.event_name == 'workflow_run' && 'deliver' || 'refresh' }}
           check-workflow: ci.yml
