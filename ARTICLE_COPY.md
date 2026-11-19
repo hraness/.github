@@ -37,19 +37,19 @@ This option hides publication, update, or source-check dates from the rendered t
 
 Title: "Introducing <product>". It lives on the product's own host, and each active product gets one. The reader's job is to decide whether to try it, so the admission record says `readerJob: "decide whether to try it"`.
 
-The post keeps five parts, written as beats:
+Publish it at a permanent URL, mark it evergreen, and pin it as the product guide above recent changes on `/blog`. Keep its original publication date. Update the guide and its modification date as the product changes.
 
-1. **What it is.** One plain sentence, then the problem it solves in the reader's terms, with one concrete case.
-2. **What it does today.** Only shipped behavior. One beat per surface or mode, and only when that beat has its own visual.
-3. **How it works and who it is for.** How it works in the reader's terms, then the reader who has the problem and who should use something else.
-4. **The vision.** Where the product is going and why, stated as intent, not as a shipped feature or a date.
-5. **Limits and status.** What it does not do yet, then the status sentence and how to get it.
+Open with one situation a reader will recognize. Walk through a real task using the names they will see in the product. Tell them what they start with, what they do, and what they get. Include enough detail to help them decide whether to try it. Mention availability, cost, platform requirements, or limits where they affect that decision. A paused product says so. Retired and legacy products get no introduction.
 
-It explains the reason for the product. It does not repeat the feature grid on the home page. A paused product says so in the status sentence; a retired or legacy product gets no introduction.
+Show one or two captioned examples of shipped behavior. Reuse a working homepage control or an actual product capture where it helps. A second example should teach a different part of the workflow. Give images descriptive alt text and interactive examples a keyboard path. Keep the steps understandable on a narrow screen, with reduced motion, and in the text alone.
+
+Put further reading, source credits, and the review note before the closing action. End with the product journal's shared call to action. Its label names the next step the reader can take today. Use the site's existing analytics consent settings to measure when the action comes into view and when a reader follows it. Use the shared layout check in the site's browser tests and check where the link goes.
 
 #### Beats
 
-A beat is one short section that makes one claim and shows one visual. Write 7 to 10 beats, about 40 to 60 words each, in this order:
+Beats are the source material for launch films and social posts. Build the campaign from the same verified product facts as the evergreen guide. The guide chooses the examples that explain its task. A campaign can cover more surfaces and point readers to that guide.
+
+For the campaign, write 7 to 10 beats, about 40 to 60 words each, in this order:
 
 | Part | Beats | Write |
 | --- | --- | --- |
@@ -61,21 +61,19 @@ A beat is one short section that makes one claim and shows one visual. Write 7 t
 | `limits` | 1 | What it does not do yet, once, at its true scope. |
 | `status` | 1 | The status label and how to get it. |
 
-- The hero holds the title, the registry `meta` as the dek, the status line from release data, and the film when there is one.
 - Each beat has a headline of 70 characters or fewer, in sentence case with no period, and a post of 250 characters or fewer that works on its own as one social post.
 - Social posts carry claims only. The `limits` beat, and any caveat, known gap, negative finding, audit or review line, or legally required disclaimer, stay in the launch post, the docs, and the site, and never reach a social post, the Show HN facts, or the Product Hunt fields. Every social post must still be true on its own: when a caveat is what keeps a beat's claim accurate, give the beat a `socialPost` that states a narrower claim accurately without it, or mark the beat `social: false`.
 - Each beat has exactly one visual, and no two beats share one. Alt text is 125 characters or fewer and describes the visual accurately. Visible captions are optional and add context; never repeat alt text or require a generic illustration disclaimer.
-- Render each beat as its own section with a `#beat-<id>` anchor.
-- After the beats: "Go deeper" links named for the reader's next task, then the social kit, then sources and the drafting and review note.
+- Keep beat IDs stable for campaign assets. Preserve existing public links when revising a guide.
 - Technical depth, comparisons with other products, and tables go in companion posts or `/compare` pages. Link them from the beat with `detailHref`.
 
 #### Launch data
 
-Keep these shapes and the checks below in the product's site source, outside any rendering framework, so the post, the social kit, film captions, and store listings share them.
+Keep these shapes and the checks below in the product's site source, outside any rendering framework, so the guide and campaign assets can draw on the same source facts.
 
 ```ts
 type LaunchBeat = {
-  id: string;              // lowercase slug, rendered as #beat-<id>
+  id: string;              // stable lowercase slug for the campaign asset
   part: "what" | "does" | "how" | "who" | "vision" | "limits" | "status";
   headline: string;        // may hold {fact} placeholders
   post: string;            // may hold {fact} placeholders
@@ -87,7 +85,7 @@ type LaunchBeat = {
   facts?: string[];        // every placeholder key the beat uses
   detailHref?: string;     // a companion post
   socialPost?: string;     // social wording when `post` keeps a caveat; accurate on its own
-  social?: boolean;        // false keeps the beat in the launch post only
+  social?: boolean;        // false excludes the beat from social posts
 };
 
 type LaunchFacts = Record<string, { value: string; source: string }>;
@@ -105,7 +103,7 @@ type SocialKit = {
 
 - **Facts.** Type every number once, in the product's `LaunchFacts` module, with its source: versions, sizes, rates, counts, and prices. The post, the social kit, film captions, and store listings all import it. Fill `{key}` placeholders from it, and reject a beat that types a digit by hand.
 - **Checks.** Check the beats' order, counts, limits, and wording rules in tests. Build each channel's posts from the social beats (every beat except `limits` and beats marked `social: false`, using `socialPost` when a beat has one), the Product Hunt fields from the product's messaging record, and the status from the release record. Check each channel's length. Also check that only the last post links, that the last post carries the status and the canonical URL without tracking parameters, that nothing asks the reader to install before a public install exists, that no other product is named, and that no post or fact carries the text of a `limits` beat or a `social: false` beat.
-- **Social kit.** Build it only from an `indexable` post. A quarantined post has no social kit. Render it as a closed `<details>` with a copy button and a character count per post. A person writes the Show HN post and the first Product Hunt comment; the kit gives them the facts.
+- **Social kit.** Build it only from an `indexable` post. A quarantined post has no social kit. When a press or campaign page offers the kit, render it as a closed `<details>` with a copy button and a character count per post. A person writes the Show HN post and the first Product Hunt comment; the kit gives them the facts.
 - **Words.** Social posts follow the rules below, plus: no hashtags, no emoji, and no thread markers such as "1/n".
 - **Admission.** A launch post passes the same admission gate as every other article. The launch helpers do not change it.
 

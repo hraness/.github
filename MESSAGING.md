@@ -111,13 +111,13 @@ Import these fields from the published record instead of typing them. When a rep
 
 - The X and LinkedIn limits come from secondary sources. Check the field's own counter when you submit.
 - A person writes the Show HN title and text and the Product Hunt first comment. Agents supply checked facts for them, not prose.
-- Launch-day social posts come from the launch post's beats, not from these fields. See [Launch posts](#launch-posts).
+- Launch-day social posts use the product's campaign beats. See [Launch posts](#launch-posts).
 - Submit the canonical URL without tracking parameters.
 - Record the exact text submitted to each field and the record field it came from, so a later audit can find listings that no longer match.
 
 ## Launch posts
 
-Launch-day social posts are cut from the beats of the product's “Introducing {product}” post, as the launch beats and social posts addendum in [`GENERATION_STYLE.md`](GENERATION_STYLE.md) describes. Each beat carries a standalone post, one visual, and alt text, so every channel below takes the same claims in the same order. The `limits` beat and any caveat, negative finding, audit or review line, or disclaimer stay in the launch post, the docs, and the site; social posts and the fact sheet carry claims only, each accurate on its own. The organization account posts them.
+Launch-day social posts use campaign beats drawn from the same verified product facts as the evergreen “Introducing” guide. The [launch beats and social posts addendum](GENERATION_STYLE.md#launch-beats-and-social-posts-addendum) gives the writing rules. Each beat carries a standalone post, one visual, and alt text, so every channel below takes the same claims in the same order. The `limits` beat and any caveat, negative finding, audit or review line, or disclaimer stay in the launch post, the docs, and the site; social posts and the fact sheet carry claims only, each accurate on its own. The organization account posts them.
 
 | Channel | Take | Limit per post |
 | --- | --- | --- |

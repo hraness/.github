@@ -85,7 +85,7 @@ This addendum covers the “Introducing” essay on a product's own site, the te
 
 ## Launch beats and social posts addendum
 
-This addendum covers the beats of an “Introducing {product}” post and the social posts made from them: an X thread, Bluesky, Threads, a LinkedIn post, and the captions of a vertical video. [`ARTICLE_COPY.md`](ARTICLE_COPY.md) defines the beats shape under “Introducing a product”, and `MESSAGING.md` gives each channel's limits. Paste the block above into the drafting prompt, then the essay addendum, then this addendum.
+Use this addendum for campaign materials made from launch beats, including social posts and vertical video captions. For the evergreen article, apply the essay addendum and the guide under [Introducing a product](ARTICLE_COPY.md#introducing-a-product). It shows one task in one or two captioned examples and ends with the reader's next step. The article guide also defines the campaign beats. `MESSAGING.md` gives each channel's limits.
 
 **One claim per post.** Each beat is also a post, and each post stands alone: a reader who sees only that post learns one true thing about the product. Do not continue a sentence across posts or refer to “above” or “the next post”.
 
