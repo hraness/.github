@@ -18,7 +18,7 @@
 
 ## Open source
 
-- [ra](https://github.com/hraness/ra): UI testing for agents that says in sentences what a person would find wrong. Read about it at [hraness.com/ra](https://hraness.com/ra/).
+- [ra](https://github.com/hraness/ra): UI testing for agents that says in sentences what a person would find wrong.
 - [Stripe History](https://github.com/hraness/stripe-history): Dated, sourced record of how Stripe grew, with the data as YAML. Read it at [hraness.com/stripe](https://hraness.com/stripe).
 - [Dawn SDK](https://github.com/hraness/dawn-sdk): Sounds, sound packs and song scores for Dawn, in TypeScript.
 - [Agent Skills](https://github.com/hraness/skillpack): Skills for repository work and multi-phase delivery with review.
