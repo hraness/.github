@@ -16,7 +16,7 @@ permissions:
 jobs:
   lint:
     name: Workflow lint
-    runs-on: ubuntu-slim
+    runs-on: hraness-cf
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -36,7 +36,7 @@ jobs:
 
   test:
     name: Script tests
-    runs-on: ubuntu-slim
+    runs-on: hraness-cf
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -62,7 +62,7 @@ jobs:
   Required:
     if: always()
     needs: [lint, test]
-    runs-on: ubuntu-slim
+    runs-on: hraness-cf
     timeout-minutes: 2
     steps:
       - name: Every blocking job passed
