@@ -16,7 +16,7 @@ permissions:
 jobs:
   lint:
     name: Workflow lint
-    runs-on: ubuntu-slim
+    runs-on: hraness-cf
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -36,12 +36,16 @@ jobs:
 
   test:
     name: Script tests
-    runs-on: ubuntu-slim
+    runs-on: hraness-cf
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Install the workflow YAML parser
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-yaml
       - name: Python unit tests
         run: python3 -m unittest discover -s tests -v
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -62,7 +66,7 @@ jobs:
   Required:
     if: always()
     needs: [lint, test]
-    runs-on: ubuntu-slim
+    runs-on: hraness-cf
     timeout-minutes: 2
     steps:
       - name: Every blocking job passed
