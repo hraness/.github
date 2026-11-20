@@ -10,7 +10,7 @@
 - [Yaptake](https://yaptake.com): Video editor for Mac.
 - [Textmock](https://textmock.com): iMessage mockups.
 - [yiii](https://yiii.io): Learn languages faster (ZH + ES).
-- [aicharts](https://aicharts.io): Compare coding models by score, reasoning effort, and cost per task.
+- [aicharts](https://aicharts.io): Compare coding models by Terminal-Bench score and cost per task.
 
 <!-- hraness-products:end -->
 
