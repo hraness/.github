@@ -4,7 +4,7 @@
 
 <!-- hraness-products:start -->
 
-- [DAWN](https://dawnav.com): Music in code.
+- [DAWN](https://dawnav.com): Piano roll studio.
 - [OH](https://oh.computer): Keeps your coding agents working.
 - [Sponge](https://sponge.computer): Reading and notes.
 - [Yaptake](https://yaptake.com): Video editor for Mac.
