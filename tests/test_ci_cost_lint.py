@@ -188,3 +188,57 @@ jobs:
 
 if __name__ == "__main__":
     unittest.main()
+
+
+RUNNERS = """
+on: push
+permissions: {contents: read}
+jobs:
+  deploy:
+    runs-on: hraness-cf
+    environment: production
+    timeout-minutes: 5
+    steps: [{run: "echo ${{ secrets.DEPLOY_TOKEN }} ${{ secrets.GITHUB_TOKEN }}"}]
+  check:
+    runs-on: hraness-cf
+    timeout-minutes: 5
+    steps: [{run: "echo ${{ secrets.GITHUB_TOKEN }}"}]
+  release:
+    runs-on: hraness-cf-isolated
+    permissions: {contents: write, id-token: write}
+    timeout-minutes: 5
+    steps: [{run: x}]
+  tag:
+    runs-on: ${{ matrix.os == 'mac' && 'self-hosted' || 'hraness-cf' }}
+    permissions: {contents: write}
+    timeout-minutes: 5
+    steps: [{run: x}]
+  hosted:
+    runs-on: ubuntu-24.04
+    permissions: {id-token: write}
+    timeout-minutes: 5
+    steps: [{run: x}]
+"""
+
+
+def runner_rules(visibility):
+    return sorted((f.job, f.rule, f.severity) for f in lint_mod.runner_findings("w.yml", RUNNERS, visibility))
+
+
+class RunnerRules(unittest.TestCase):
+    def test_a_private_job_that_holds_a_secret_or_writes_runs_on_the_isolated_label(self):
+        self.assertEqual(runner_rules("private"), [("deploy", "shared-secret", "error"), ("tag", "shared-secret", "error")])
+        message = next(f.message for f in lint_mod.runner_findings("w.yml", RUNNERS, "private") if f.job == "deploy")
+        self.assertIn("DEPLOY_TOKEN", message)
+        self.assertNotIn("GITHUB_TOKEN", message)
+
+    def test_a_public_job_never_runs_on_an_owned_runner(self):
+        self.assertEqual(runner_rules("public"), [("check", "public-owned", "error"), ("deploy", "public-owned", "error"),
+                                                  ("release", "public-owned", "error"), ("tag", "public-owned", "error")])
+
+    def test_runner_errors_fail_a_public_repository_too(self):
+        with tempfile.TemporaryDirectory() as root:
+            (Path(root) / ".github" / "workflows").mkdir(parents=True)
+            (Path(root) / ".github" / "workflows" / "w.yml").write_text(RUNNERS)
+            with redirect_stdout(io.StringIO()):
+                self.assertEqual(lint_mod.main([root, "--visibility", "public"]), 1)

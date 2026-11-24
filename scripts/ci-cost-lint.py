@@ -19,10 +19,16 @@ branch of --repo through `gh api`. Rules (see the hraness-ci block in AGENTS.md)
                   setup-node/setup-python `cache:`, setup-uv caching without
                   `save-cache`
   no-timeout      a job without `timeout-minutes`
+  shared-secret   (private) a job on the shared `hraness-cf` label that holds a
+                  secret other than GITHUB_TOKEN, uses an `environment`, or asks
+                  for id-token, contents, packages or attestations write; it
+                  belongs on `hraness-cf-isolated`, which no shared host serves
+  public-owned    (public) a job on an owned `hraness-*` or `self-hosted`
+                  runner; public repositories use GitHub-hosted runners
 
 Findings are errors in private repositories (billed minutes) and warnings in
-public ones. The exit status is 1 only when the repository is private and has
-at least one finding; 2 on usage or input errors.
+public ones, except the two runner rules, which are errors in both. The exit
+status is 1 when there is at least one error; 2 on usage or input errors.
 """
 from __future__ import annotations
 
@@ -243,12 +249,61 @@ def visibility_of(repo: str | None, root: Path) -> str:
         return "unknown"
 
 
+SHARED_LABEL = "hraness-cf"
+WRITES = ("id-token", "contents", "packages", "attestations")
+SECRET = re.compile(r"secrets\.([A-Za-z0-9_]+)|secrets\[['\"]([A-Za-z0-9_]+)['\"]\]")
+
+
+def writes(permissions: object) -> list[str]:
+    if permissions == "write-all":
+        return list(WRITES)
+    if isinstance(permissions, dict):
+        return [k for k in WRITES if str(permissions.get(k, "")).strip() == "write"]
+    return []
+
+
+def runner_findings(name: str, text: str, visibility: str) -> list[Finding]:
+    """Where a job may run: secrets stay off shared hosts, public code off owned machines."""
+    try:
+        workflow = load_yaml(text)
+    except Exception:  # noqa: BLE001 - lint_workflow already reports parse failures
+        return []
+    if not isinstance(workflow, dict) or not isinstance(workflow.get("jobs"), dict):
+        return []
+    raw = job_texts(text)
+    findings = []
+    for job_id, job in workflow["jobs"].items():
+        if not isinstance(job, dict) or "uses" in job:
+            continue
+        labels = {s.strip() for s in strings(job.get("runs-on"))}
+        labels |= {m for s in strings(job.get("runs-on")) for m in re.findall(r"'([^']+)'", s)}
+        if visibility == "public":
+            owned = sorted(l for l in labels if l.startswith("hraness-") or l == "self-hosted")
+            if owned:
+                findings.append(Finding(name, job_id, "public-owned", f"public repository job on {', '.join(owned)}; use GitHub-hosted ubuntu-24.04 so no stranger's code runs on owned machines", "error"))
+            continue
+        if visibility != "private" or SHARED_LABEL not in labels:
+            continue
+        why = []
+        held = sorted({a or b for a, b in SECRET.findall(raw.get(job_id, ""))} - {"GITHUB_TOKEN"})
+        if held:
+            why.append("secrets " + ", ".join(held))
+        if job.get("environment") is not None:
+            why.append("an environment")
+        wrote = writes(job["permissions"]) if "permissions" in job else writes(workflow.get("permissions"))
+        if wrote:
+            why.append(", ".join(wrote) + " write")
+        if why:
+            findings.append(Finding(name, job_id, "shared-secret", f"holds {'; '.join(why)} on the shared {SHARED_LABEL} label; use hraness-cf-isolated, which only per-job VMs serve", "error"))
+    return findings
+
+
 def lint(workflows: dict[str, str], visibility: str) -> list[Finding]:
     severity = "error" if visibility == "private" else "warning"
     findings = [f for name, text in workflows.items() for f in lint_workflow(name, text)]
     for f in findings:
         f.severity = severity
-    return findings
+    return findings + [f for name, text in workflows.items() for f in runner_findings(name, text, visibility)]
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -274,7 +329,7 @@ def main(argv: list[str] | None = None) -> int:
             where = f"{f.file}:{f.job}" if f.job else f.file
             print(f"{f.severity}: {where}: {f.rule}: {f.message}")
         print(f"ci-cost-lint: {target} ({visibility}): {len(workflows)} workflow(s), {len(findings)} finding(s)")
-    return 1 if visibility == "private" and findings else 0
+    return 1 if any(f.severity == "error" for f in findings) else 0
 
 
 if __name__ == "__main__":
