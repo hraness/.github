@@ -53,7 +53,7 @@ jobs:
           node-version: '24'
           package-manager-cache: false
       - name: Check the marked current-product list
-        uses: hraness/product-skills/actions/check-profile@3236d9708fbbf4c2e5ee00e9263647c8ee72d527 # recognizes OH
+        uses: hraness/product-skills/actions/check-profile@d2bd8f5ef57d471e86c4b5b0e738442d5bedaeae # recognizes OH
       - name: npm visibility action tests
         run: node --test actions/npm-visible/index.test.mjs
       - name: Dependency audit action tests
